@@ -1,0 +1,9 @@
+{
+  "name": "oreguard",
+  "version": "0.1.0",
+  "title": "OreGuard",
+  "author": "nmrp3",
+  "description": "Prevents building over ore except for mining drills, power poles, belts, beacons, pipes, roboports, boxes, and furnaces.",
+  "factorio_version": "2.0",
+  "dependencies": ["base >= 2.0.0"]
+}
