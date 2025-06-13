@@ -30,7 +30,11 @@ script.on_event(defines.events.on_built_entity, function(event)
   if #ores > 0 then
     local player = game.get_player(event.player_index)
     if player then
-      player.print({"oreguard.cannot-build"})
+      player.create_local_flying_text{
+        text = {"oreguard.cannot-build"},
+        position = entity.position,
+        color = {r=1, g=0.2, b=0.2}
+      }
       -- Try to return the item to the player's inventory
       local stack = {name = entity.name, count = 1}
       local inserted = player.insert(stack)
@@ -80,6 +84,10 @@ script.on_event(defines.events.on_player_built_tile, function(event)
         surface.spill_item_stack(player.position, {name = item_name, count = #denied_tiles - inserted}, true, player.force, false)
       end
     end
-    player.print({"oreguard.cannot-build"})
+    player.create_local_flying_text{
+      text = {"oreguard.cannot-build"},
+      position = player.position,
+      color = {r=1, g=0.2, b=0.2}
+    }
   end
 end)
