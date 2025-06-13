@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 2024-02-15
+  Features:
+  - Added tiered build restrictions as a map setting with selectable levels: Hardcore, Mining, Bot Mining, Default, and Decorative.
+  - Warning messages now use floating text instead of chat.
+  - Improved locale and settings integration.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 2024-01-01
+  Major Features:
+  - Initial release.
+  - Prevents building most entities and flooring tiles directly on top of ore patches.
+  - Allows placement of mining drills, power poles, belts, beacons, pipes, roboports, boxes, and furnaces on ore.
+  - Returns blocked items to the player's inventory or spills them on the ground if inventory is full.
+  - Displays a warning message when a build is blocked.
