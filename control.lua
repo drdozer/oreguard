@@ -1,18 +1,67 @@
 -- OreGuard: Prevents building over ore except for whitelisted entity types
 
-local allowed_types = {
-  ["mining-drill"] = true,
-  ["electric-pole"] = true,
-  ["transport-belt"] = true,
-  ["beacon"] = true,
-  ["pipe"] = true,
-  ["roboport"] = true,
-  ["container"] = true, -- boxes
-  ["logistic-container"] = true, -- logistics boxes
-  ["furnace"] = true    -- furnaces
-}
+local function get_allowed_types()
+  local tier = settings.global["oreguard-tier"].value
+  if tier == "hardcore" then
+    return { ["mining-drill"] = true }
+  elseif tier == "mining" then
+    return {
+      ["mining-drill"] = true,
+      ["electric-pole"] = true,
+      ["transport-belt"] = true,
+      ["pipe"] = true
+    }
+  elseif tier == "bot-mining" then
+    return {
+      ["mining-drill"] = true,
+      ["electric-pole"] = true,
+      ["transport-belt"] = true,
+      ["pipe"] = true,
+      ["roboport"] = true,
+      ["logistic-container"] = true
+    }
+  elseif tier == "default" then
+    return {
+      ["mining-drill"] = true,
+      ["electric-pole"] = true,
+      ["transport-belt"] = true,
+      ["pipe"] = true,
+      ["roboport"] = true,
+      ["logistic-container"] = true,
+      ["container"] = true,
+      ["beacon"] = true,
+      ["furnace"] = true
+    }
+  elseif tier == "decorative" then
+    return {
+      ["mining-drill"] = true,
+      ["electric-pole"] = true,
+      ["transport-belt"] = true,
+      ["pipe"] = true,
+      ["roboport"] = true,
+      ["logistic-container"] = true,
+      ["container"] = true,
+      ["beacon"] = true,
+      ["furnace"] = true
+    }, true
+  end
+  return {
+    ["mining-drill"] = true,
+    ["electric-pole"] = true,
+    ["transport-belt"] = true,
+    ["beacon"] = true,
+    ["pipe"] = true,
+    ["roboport"] = true,
+    ["container"] = true,
+    ["logistic-container"] = true,
+    ["furnace"] = true
+  }
+end
+
+local allowed_types = get_allowed_types()
 
 script.on_event(defines.events.on_built_entity, function(event)
+  local allowed_types, allow_flooring = get_allowed_types()
   local entity = event.created_entity or event.entity
   if not entity or not entity.valid then return end
 
@@ -32,7 +81,7 @@ script.on_event(defines.events.on_built_entity, function(event)
     local player = game.get_player(event.player_index)
     if player then
       player.create_local_flying_text{
-        text = {"oreguard.cannot-build"},
+        text = {"message.oreguard.cannot-build"},
         position = entity.position,
         color = {r=1, g=0.2, b=0.2}
       }
@@ -50,6 +99,9 @@ end)
 
 -- Prevent flooring tiles from being built over ore
 script.on_event(defines.events.on_player_built_tile, function(event)
+  local allowed_types, allow_flooring = get_allowed_types()
+  if allow_flooring then return end
+
   local player = game.get_player(event.player_index)
   local surface = player and player.surface
   if not player or not surface then return end
@@ -86,7 +138,7 @@ script.on_event(defines.events.on_player_built_tile, function(event)
       end
     end
     player.create_local_flying_text{
-      text = {"oreguard.cannot-build"},
+      text = {"message.oreguard.cannot-build"},
       position = player.position,
       color = {r=1, g=0.2, b=0.2}
     }
