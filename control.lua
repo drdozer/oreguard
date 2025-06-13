@@ -8,6 +8,7 @@ local allowed_types = {
   ["pipe"] = true,
   ["roboport"] = true,
   ["container"] = true, -- boxes
+  ["logistic-container"] = true, -- logistics boxes
   ["furnace"] = true    -- furnaces
 }
 
