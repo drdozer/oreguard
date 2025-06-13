@@ -5,20 +5,22 @@ OreGuard is a Factorio 2 mod that protects ore patches from over-building.
 ## Features
 
 - Prevents building most entities and flooring tiles directly on top of ore patches.
-- Allows placement of mining drills, power poles, belts, beacons, pipes, roboports, boxes, and furnaces on ore.
+- Allows placement of certain entities on ore, depending on the selected restriction tier.
 - Returns blocked items to the player's inventory or spills them on the ground if inventory is full.
-- Displays a warning message when a build is blocked.
+- Displays a warning message as floating text when a build is blocked.
 
-## Whitelisted Entities
+## Restriction Tiers
 
-- Mining drills
-- Electric poles
-- Transport belts
-- Beacons
-- Pipes
-- Roboports
-- Boxes (containers)
-- Furnaces
+| Tier        | Mining Drill | Power Pole | Belt | Pipe | Roboport | Logistic Chest | Container | Beacon | Furnace | Flooring |
+|-------------|:-----------:|:----------:|:----:|:----:|:--------:|:--------------:|:---------:|:------:|:-------:|:--------:|
+| Hardcore    |      ✔      |            |      |      |          |                |           |        |         |          |
+| Mining      |      ✔      |     ✔      |  ✔   |  ✔   |          |                |           |        |         |          |
+| Bot Mining  |      ✔      |     ✔      |  ✔   |  ✔   |    ✔     |       ✔        |           |        |         |          |
+| Default     |      ✔      |     ✔      |  ✔   |  ✔   |    ✔     |       ✔        |     ✔     |   ✔    |    ✔    |          |
+| Decorative  |      ✔      |     ✔      |  ✔   |  ✔   |    ✔     |       ✔        |     ✔     |   ✔    |    ✔    |    ✔     |
+
+- The restriction tier can be set in the mod settings (per map).
+- Higher tiers allow more types of entities to be placed on ore patches.
 
 ## Compatibility
 
