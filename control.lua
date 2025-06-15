@@ -65,8 +65,8 @@ script.on_event(defines.events.on_built_entity, function(event)
   local entity = event.created_entity or event.entity
   if not entity or not entity.valid then return end
 
-  local type = entity.type
-  if allowed_types[type] then
+  local entity_type = entity.type
+  if allowed_types[entity_type] then
     return -- Allowed
   end
 
@@ -85,13 +85,27 @@ script.on_event(defines.events.on_built_entity, function(event)
         position = entity.position,
         color = {r=1, g=0.2, b=0.2}
       }
-      -- Try to return the item to the player's inventory
-      local stack = {name = entity.name, count = 1}
-      local inserted = player.insert(stack)
-      if inserted < 1 then
-        -- If inventory is full, spill the item on the ground
-        player.surface.spill_item_stack(player.position, stack, true, player.force, false)
+      -- Try to return the correct item to the player's inventory
+      local items = entity.prototype.items_to_place_this
+      local returned = false
+      if items and type(game) == "table" and game.item_prototypes then
+        for item_name, _ in pairs(items) do
+          if game.item_prototypes[item_name] then
+            local stack = {name = item_name, count = 1}
+            local inserted = player.insert(stack)
+            if inserted < 1 then
+              player.surface.spill_item_stack(player.position, stack, true, player.force, false)
+            end
+            returned = true
+            break -- Only return one valid item
+          end
+        end
+      else
+        if not (type(game) == "table" and game.item_prototypes) then
+          log("[OreGuard] game.item_prototypes not available in on_built_entity event!")
+        end
       end
+      -- If no item found, do not attempt to insert
     end
     entity.destroy()
   end
