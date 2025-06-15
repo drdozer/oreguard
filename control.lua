@@ -1,5 +1,11 @@
 -- OreGuard: Prevents building over ore except for whitelisted entity types
 
+local DEBUGGING = false
+
+local function debug_log(msg)
+  if DEBUGGING then log(msg) end
+end
+
 local function get_allowed_types()
   local tier = settings.global["oreguard-tier"].value
   if tier == "hardcore" then
@@ -84,7 +90,7 @@ script.on_event(defines.events.on_built_entity, function(event)
   if #ores > 0 then
     local player = game.get_player(event.player_index)
     if player then
-      log("[OreGuard] Blocked entity: " .. (entity.name or "nil") .. ", type: " .. (entity_type or "nil"))
+      debug_log("[OreGuard] Blocked entity: " .. (entity.name or "nil") .. ", type: " .. (entity_type or "nil"))
       player.create_local_flying_text{
         text = {"message.oreguard.cannot-build"},
         position = entity.position,
@@ -94,44 +100,44 @@ script.on_event(defines.events.on_built_entity, function(event)
       local items = entity.prototype.items_to_place_this
       local returned = false
       if items then
-        log("[OreGuard] items_to_place_this found for " .. entity.name)
+        debug_log("[OreGuard] items_to_place_this found for " .. entity.name)
         for _, item_name in ipairs(items) do
           local actual_item_name = item_name
           if type(item_name) == "table" and item_name.name then
             actual_item_name = item_name.name
           end
-          log("[OreGuard] Checking item prototype: " .. tostring(actual_item_name))
+          debug_log("[OreGuard] Checking item prototype: " .. tostring(actual_item_name))
           if prototypes.item[actual_item_name] then
-            log("[OreGuard] Inserting item: " .. tostring(actual_item_name))
+            debug_log("[OreGuard] Inserting item: " .. tostring(actual_item_name))
             local stack = {name = actual_item_name, count = 1}
             local inserted = player.insert(stack)
             if inserted < 1 then
-              log("[OreGuard] Inventory full, spilling item: " .. tostring(actual_item_name))
+              debug_log("[OreGuard] Inventory full, spilling item: " .. tostring(actual_item_name))
               player.surface.spill_item_stack(player.position, stack, true, player.force, false)
             end
             returned = true
             break -- Only return one valid item
           else
-            log("[OreGuard] No item prototype for: " .. tostring(actual_item_name))
+            debug_log("[OreGuard] No item prototype for: " .. tostring(actual_item_name))
           end
         end
       else
-        log("[OreGuard] No items_to_place_this for " .. entity.name)
+        debug_log("[OreGuard] No items_to_place_this for " .. entity.name)
       end
       -- Fallback: if nothing was returned, try to return the entity itself as an item (for legacy/simple cases)
       if not returned and prototypes.item[entity.name] then
-        log("[OreGuard] Fallback: inserting entity as item: " .. entity.name)
+        debug_log("[OreGuard] Fallback: inserting entity as item: " .. entity.name)
         local stack = {name = entity.name, count = 1}
         local inserted = player.insert(stack)
         if inserted < 1 then
-          log("[OreGuard] Inventory full, spilling fallback item: " .. entity.name)
+          debug_log("[OreGuard] Inventory full, spilling fallback item: " .. entity.name)
           player.surface.spill_item_stack(player.position, stack, true, player.force, false)
         end
       elseif not returned then
-        log("[OreGuard] No valid item to return for: " .. entity.name)
+        debug_log("[OreGuard] No valid item to return for: " .. entity.name)
       end
       if not returned then
-        log("[OreGuard] No item was returned or inserted for entity: " .. (entity.name or "nil"))
+        debug_log("[OreGuard] No item was returned or inserted for entity: " .. (entity.name or "nil"))
       end
     end
     entity.destroy()
