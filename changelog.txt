@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.1
+Date: 2025-06-15
+  Features:
+  - Added explicit support for elevated rails and rail supports, allowing them to be placed over ore patches.
+  Bug Fixes:
+  - Fixed a crash that occurred when building rails (or other entities without a direct item) over ore patches.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.2.0
 Date: 2024-02-15
   Features:
