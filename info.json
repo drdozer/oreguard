@@ -1,6 +1,6 @@
 {
   "name": "oreguard",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "title": "OreGuard",
   "author": "nmrp3",
   "description": "Prevents building over ore except for mining drills, power poles, belts, beacons, pipes, roboports, boxes, and furnaces.",

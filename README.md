@@ -25,6 +25,7 @@ OreGuard is a Factorio 2 mod that protects ore patches from over-building.
 ## Compatibility
 
 - Designed for Factorio 2.0 and above.
+- Supports elevated rails spanning over ore patches.
 - Should be compatible with most other mods, but may conflict with mods that alter tile or entity placement logic.
 
 ## Related Mods
