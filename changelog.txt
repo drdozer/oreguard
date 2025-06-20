@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.0
+Date: 2025-01-15
+  Features:
+  - Added startup setting to prevent regular rails from being built over ore patches.
+  - If elevated rails mod is present, rail bridges can automatically span over ore patches.
+  - Rail planner now automatically creates elevated rails when regular rails would conflict with ore.
+  Bug Fixes:
+  - Fixed blueprints not respecting ore protection rules.
+
+---------------------------------------------------------------------------------------------------
 Version: 0.2.1
 Date: 2025-06-15
   Features:

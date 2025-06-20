@@ -1,1 +1,3 @@
--- data.lua for oresafe (empty, as we do not modify prototypes or map gen)
+-- data.lua for oreguard
+-- Main prototype modifications are handled in data-final-fixes.lua
+-- to ensure they run after all other mods have modified ore entities
