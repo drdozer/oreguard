@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.2
+Date: 2025-01-16
+  Features:
+    - Added underground belts and splitters to allowed entities wherever transport belts are allowed
+    - Added underground pipes to allowed entities wherever pipes are allowed
+
+---------------------------------------------------------------------------------------------------
 Version: 0.3.0
 Date: 2025-01-15
   Features:

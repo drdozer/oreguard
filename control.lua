@@ -11,14 +11,20 @@ local function get_allowed_types()
             ["mining-drill"] = true,
             ["electric-pole"] = true,
             ["transport-belt"] = true,
-            ["pipe"] = true
+            ["underground-belt"] = true,
+            ["splitter"] = true,
+            ["pipe"] = true,
+            ["pipe-to-ground"] = true
         }
     elseif tier == "bot-mining" then
         return {
             ["mining-drill"] = true,
             ["electric-pole"] = true,
             ["transport-belt"] = true,
+            ["underground-belt"] = true,
+            ["splitter"] = true,
             ["pipe"] = true,
+            ["pipe-to-ground"] = true,
             ["roboport"] = true,
             ["logistic-container"] = true
         }
@@ -27,7 +33,10 @@ local function get_allowed_types()
             ["mining-drill"] = true,
             ["electric-pole"] = true,
             ["transport-belt"] = true,
+            ["underground-belt"] = true,
+            ["splitter"] = true,
             ["pipe"] = true,
+            ["pipe-to-ground"] = true,
             ["roboport"] = true,
             ["logistic-container"] = true,
             ["container"] = true,
@@ -39,7 +48,10 @@ local function get_allowed_types()
             ["mining-drill"] = true,
             ["electric-pole"] = true,
             ["transport-belt"] = true,
+            ["underground-belt"] = true,
+            ["splitter"] = true,
             ["pipe"] = true,
+            ["pipe-to-ground"] = true,
             ["roboport"] = true,
             ["logistic-container"] = true,
             ["container"] = true,
@@ -51,8 +63,11 @@ local function get_allowed_types()
         ["mining-drill"] = true,
         ["electric-pole"] = true,
         ["transport-belt"] = true,
+        ["underground-belt"] = true,
+        ["splitter"] = true,
         ["beacon"] = true,
         ["pipe"] = true,
+        ["pipe-to-ground"] = true,
         ["roboport"] = true,
         ["container"] = true,
         ["logistic-container"] = true,
