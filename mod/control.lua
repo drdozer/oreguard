@@ -244,8 +244,9 @@ script.on_event(defines.events.on_robot_built_entity, function(event)
 end)
 
 -- Tile paving: deny per tile unless the decorative-tile toggle is on.
--- Shared by the player and robot event streams.
-local function enforce_tile_guard(surface, tiles, item_name, carrier)
+-- Shared by the player and robot event streams; is_robot comes from the
+-- call site (LuaPlayer has no .type — the matrix caught that 0.4.0 bug).
+local function enforce_tile_guard(surface, tiles, item_name, carrier, is_robot)
     if settings.global["oreguard-allow-decorative-tiles"].value then
         return
     end
@@ -277,14 +278,14 @@ local function enforce_tile_guard(surface, tiles, item_name, carrier)
         local stack = { name = item_name, count = #denied }
         local inserted = insert_into(carrier, stack)
         if inserted < #denied then
-            local spill_position = carrier.type == ROBOT and denied[1].position or carrier.position
+            local spill_position = is_robot and denied[1].position or carrier.position
             debug_log("[OreGuard] Carrier full or absent, spilling " .. (#denied - inserted) .. " of " .. item_name)
             spill_stack(surface, spill_position, { name = item_name, count = #denied - inserted },
                 carrier.force or game.forces.player)
         end
     end
 
-    if carrier.type == ROBOT then
+    if is_robot then
         warn_nearby(surface, carrier.force, denied[1].position)
     elseif carrier.create_local_flying_text then
         warn_player(carrier, carrier.position)
@@ -309,7 +310,7 @@ script.on_event(defines.events.on_player_built_tile, function(event)
     if not carrier or not carrier.surface then
         return
     end
-    enforce_tile_guard(carrier.surface, event.tiles, event.item, carrier)
+    enforce_tile_guard(carrier.surface, event.tiles, event.item, carrier, false)
 end)
 
 script.on_event(defines.events.on_robot_built_tile, function(event)
@@ -317,7 +318,7 @@ script.on_event(defines.events.on_robot_built_tile, function(event)
     if not carrier or not carrier.valid then
         return
     end
-    enforce_tile_guard(carrier.surface, event.tiles, event.item or tile_item_fallback(event.tiles), carrier)
+    enforce_tile_guard(carrier.surface, event.tiles, event.item or tile_item_fallback(event.tiles), carrier, true)
 end)
 
 -- 0.3.x -> 0.4.0 migration: older versions refused blocked entities only at

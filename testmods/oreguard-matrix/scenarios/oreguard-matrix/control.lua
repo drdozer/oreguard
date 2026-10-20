@@ -112,7 +112,7 @@ script.on_init(function()
     game.map_settings.enemy_expansion.enabled = false
     game.forces["enemy"].evolution_factor = 0
     local p = game.player or game.get_player(1)
-    if p then p.force.set_cease_fire(game.forces.enemy) end
+    if p then p.force.set_cease_fire(game.forces.enemy, false) end
   end)
   for _, ent in pairs(surface.find_entities_filtered({ force = "enemy", limit = 1000 })) do
     pcall(function() ent.destroy() end)

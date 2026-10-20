@@ -79,6 +79,7 @@ def game_bin(root: pathlib.Path) -> pathlib.Path:
 
 def setup_instance(name: str, root: pathlib.Path):
     inst = SCRATCH / f"instance-{name}"
+    (inst / "script-output").mkdir(parents=True, exist_ok=True)
     (inst / "config").mkdir(parents=True, exist_ok=True)
     (inst / "mods").mkdir(parents=True, exist_ok=True)
 
@@ -199,6 +200,10 @@ def run_instance(name, root, bin_path, windowed=True, lab=None, leave_open=False
     out = inst / "script-output" / RESULTS
     if out.exists():
         out.unlink()
+    cur_log = inst / "factorio-current.log"
+    # rotate stale logs — the poll must only ever see THIS run's results
+    if cur_log.is_file():
+        cur_log.rename(inst / "factorio-previous.log")
     print(f"--- instance {name}: {inst}")
 
     if lab:
@@ -222,8 +227,34 @@ def run_instance(name, root, bin_path, windowed=True, lab=None, leave_open=False
 
     proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     deadline = time.time() + TIMEOUT_SECONDS
+    def poll_log():
+        if not cur_log.is_file():
+            return None
+        body = cur_log.read_text(errors="replace")
+        if "MATRIX-RESULTS" not in body:
+            return None
+        recs = []
+        for c in body.splitlines():
+            if "MATRIX-CASE " in c:
+                try: recs.append(json.loads(c.split("MATRIX-CASE ", 1)[1]))
+                except Exception: pass
+        summary = [c for c in body.splitlines() if "MATRIX-RESULTS" in c][-1]
+        data = {"done": True, "records": recs, "summary": summary}
+        for k in ("passed", "failed", "skipped"):
+            data[k] = int(summary.split(k + "=")[1].split()[0]) if (k + "=") in summary else 0
+        return data
     try:
         while time.time() < deadline:
+            data = poll_log()
+            if data is not None:
+                if windowed:
+                    try:
+                        proc.terminate(); proc.wait(timeout=10)
+                    except Exception:
+                        proc.kill()
+                else:
+                    rcon_quit(RCON_PORT, RCON_PASSWORD)
+                return data
             if proc.poll() is not None:
                 print(f"server exited early (rc={proc.returncode}) — check "
                       f"{inst}/logs/")

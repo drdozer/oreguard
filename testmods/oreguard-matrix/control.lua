@@ -32,7 +32,7 @@ local POWER_ISLAND = {
   substation = { -25, 13 },
   roboport   = { -28, 14 },
   chest      = { -22, 13 },
-  spare_chest = { -22, 15 },  -- steel chest next to the provider chest (safety net)
+  spare_chest = { -22, 15 },  -- storage chest next to the provider chest (bot drop-off safety net)
 }
 
 -- ---------------------------------------------------------------- harness
@@ -64,6 +64,9 @@ end
 
 local function write_results()
   results.done = done
+  -- windowed sessions may lack a script-output dir (write_file fails
+  -- silently) — the log lines are the authoritative record; the runner
+  -- parses factorio-current.log for MATRIX-RESULTS / MATRIX-CASE.
   helpers.write_file(RESULTS_FILE, helpers.table_to_json(results) .. "\n", false, 0)
   if done then
     log(string.format("MATRIX-RESULTS passed=%d failed=%d skipped=%d",
@@ -73,6 +76,7 @@ end
 
 local function record(rec)
   results.records[#results.records + 1] = rec
+  log("MATRIX-CASE " .. helpers.table_to_json(rec))
   if rec.pass == true then
     results.passed = results.passed + 1
   elseif rec.pass == false then
@@ -114,12 +118,15 @@ local function restore_grass(x, y)
   surface.set_tiles({ { name = GRASS, position = { x, y } } }, true)
 end
 
+TILE_DEBUG = "?"
+
 local function placed_entity_present(cas)
   local area = { { cas.pos[1] - 0.49, cas.pos[2] - 0.49 }, { cas.pos[1] + 0.49, cas.pos[2] + 0.49 } }
   -- tile items: "built" state is the surface tile itself — paved != grass;
   -- guard-blocked restores grass.
   if prototypes.tile[cas.item] then
     local tile = surface.get_tile(cas.pos[1], cas.pos[2])
+    TILE_DEBUG = tile and tile.name or "?"
     return tile and tile.name ~= GRASS
   end
   local ptype = nil
@@ -136,6 +143,20 @@ end
 
 -- per player case: stage 1 (setup+build) on one tick, stage 2 (assert+cleanup)
 -- on the next — the guard's event handler has then definitely run.
+-- 2.x removed LuaPlayer.clean_cursor — clear via stack clear / put-back
+local function clear_player_cursor()
+  local ok = pcall(function() return player.clear_cursor() end)   -- 1.x spelling
+  if not ok then
+    local cs = player.cursor_stack
+    if cs and cs.valid_for_read then
+      pcall(function()
+        player.insert({ name = cs.name, count = cs.count })  -- put back first
+      end)
+      pcall(function() cs.clear() end)
+    end
+  end
+end
+
 local function case_setup(cas)
   current_case = cas
   clear_rect(cas.pos[1], cas.pos[2], 3)
@@ -143,14 +164,20 @@ local function case_setup(cas)
   if cas.tier then set_tier(cas.tier) end
   if cas.tiles ~= nil then set_tiles_toggle(cas.tiles) end
 
-  player.clean_cursor()
+  clear_player_cursor()
   main_before = player.get_main_inventory().get_item_count(cas.item)
 
   if not prototypes.item[cas.item] then
     return -- recorded as skip in the assert stage
   end
   player.teleport({ cas.pos[1] + 3, cas.pos[2] + 3 })
-  player.cursor_stack.set_stack({ name = cas.item, count = 1 })
+  local cs_ok = pcall(function()
+    player.cursor_stack.set_stack({ name = cas.item, count = 1 })
+  end)
+  if not cs_ok then
+    main_before = main_before -- unchanged; assert records the skip
+    return
+  end
   player.build_from_cursor({ position = { cas.pos[1], cas.pos[2] }, direction = defines.direction.north })
 end
 
@@ -178,12 +205,12 @@ local function case_assert(cas)
     end
     rec.got = got or "other"
     rec.pass = rec.got == cas.expected
-    rec.detail = string.format("present=%s main_before=%d main_after=%d cursor=%s",
-      tostring(present), main_before, main_after, tostring(cursor_holds))
+    rec.detail = string.format("present=%s main_before=%d main_after=%d cursor=%s tile=%s",
+      tostring(present), main_before, main_after, tostring(cursor_holds), tostring(TILE_DEBUG))
   end
   record(rec)
 
-  player.clean_cursor()
+  clear_player_cursor()
   local back = main_inv.get_item_count(cas.item)
   if back > 0 then player.remove_item({ name = cas.item, count = back }) end
   clear_rect(cas.pos[1], cas.pos[2], 3)
@@ -216,7 +243,7 @@ local function robot_infra_setup()
   for key, pos in pairs(POWER_ISLAND) do
     local name = ({ eei = "electric-energy-interface", substation = "substation",
                     roboport = "roboport", chest = "passive-provider-chest",
-                    spare_chest = "steel-chest" })[key]
+                    spare_chest = "storage-chest" })[key]
     local ent = find_or_create_entity(name, pos)
     if not ent or not ent.valid then
       return false, "could not create/adopt " .. name
@@ -317,14 +344,19 @@ end
 -- placement; GUI wall) — the straight-rail/elevated cases record honest
 -- skips; the rail-FAMILY runtime gating is exercised by the signal items.
 local RAIL_A = {
-  { id = "rail-signal-hc",   area = "alley", pos = { -1, -8 }, item = "rail-signal",       tier = "hardcore", expected = "guard-blocked" },
-  { id = "rail-signal-df",   area = "alley", pos = { 0, -8 },  item = "rail-signal",       tier = "default",  expected = "guard-blocked" },
-  { id = "rail-chain-df",    area = "alley", pos = { 1, -8 },  item = "rail-chain-signal", tier = "default",  expected = "guard-blocked" },
-  { id = "train-stop-df",    area = "alley", pos = { -3, -8 }, item = "train-stop",        tier = "default",  expected = "guard-blocked" },
+  -- In a stamped world (toggle off) signals/stops are engine-refused over
+  -- ore (collision layer pair); the runtime guard remains the fallback for
+  -- unstamped configurations. rail-ramp has a real item and places (name
+  -- exemption proven); straight-rail/elevated-rail have no cursor item in
+  -- 2.1 → pcall'd set_stack records a clean skip.
+  { id = "rail-signal-hc",   area = "alley", pos = { -1, -8 }, item = "rail-signal",       tier = "hardcore", expected = "engine-refused" },
+  { id = "rail-signal-df",   area = "alley", pos = { 0, -8 },  item = "rail-signal",       tier = "default",  expected = "engine-refused" },
+  { id = "rail-chain-df",    area = "alley", pos = { 1, -8 },  item = "rail-chain-signal", tier = "default",  expected = "engine-refused" },
+  { id = "train-stop-df",    area = "alley", pos = { -3, -8 }, item = "train-stop",        tier = "default",  expected = "engine-refused" },
   { id = "rail-support-df",  area = "alley", pos = { 0, -8 },  item = "rail-support",      tier = "default",  expected = "placed" },
+  { id = "rail-ramp-df",     area = "alley", pos = { 1, -8 },  item = "rail-ramp",         tier = "default",  expected = "placed" },
   { id = "straight-rail-hc", area = "alley", pos = { -2, -8 }, item = "straight-rail",     tier = "hardcore", expected = "skip" },
   { id = "elevated-rail-hc", area = "alley", pos = { 3, -8 },  item = "elevated-rail",     tier = "hardcore", expected = "skip" },
-  { id = "rail-ramp-df",     area = "alley", pos = { 1, -8 },  item = "rail-ramp",         tier = "default",  expected = "skip" },
 }
 for _, cas in ipairs(RAIL_A) do
   PLAYER_CASES_A[#PLAYER_CASES_A + 1] = cas
@@ -333,9 +365,11 @@ end
 -- tiles: the tile guard honors only the decorative-tiles toggle (runtime
 -- global; the case driver flips it)
 local TILE_CASES_A = {
-  { id = "landfill-off-hc",  area = "iron", pos = { -14, 0 }, item = "landfill",         tiles = false, expected = "guard-blocked" },
-  { id = "landfill-off-df",  area = "iron", pos = { -15, 0 }, item = "landfill",         tiles = false, expected = "guard-blocked" },
-  { id = "landfill-on-df",   area = "iron", pos = { -16, 1 }, item = "landfill",         tiles = true,  expected = "placed" },
+  -- landfill is WATER-only in vanilla (engine-refused on grass regardless of
+  -- the guard) — placeable tile items: stone-brick / refined-concrete
+  { id = "brick-off-hc",     area = "iron", pos = { -14, 0 }, item = "stone-brick",      tiles = false, expected = "guard-blocked" },
+  { id = "brick-off-df",     area = "iron", pos = { -15, 0 }, item = "stone-brick",      tiles = false, expected = "guard-blocked" },
+  { id = "brick-on-df",      area = "iron", pos = { -16, 1 }, item = "stone-brick",      tiles = true,  expected = "placed" },
   { id = "concrete-off-df",  area = "iron", pos = { -17, 2 }, item = "refined-concrete", tiles = false, expected = "guard-blocked" },
   { id = "concrete-on-hc",   area = "iron", pos = { -18, 1 }, item = "refined-concrete", tiles = true,  expected = "placed" },
 }
@@ -348,7 +382,7 @@ local CONTROL_CASES = {
   { id = "furnace-control-hc",  pos = { -1, 7 }, item = "stone-furnace", tier = "hardcore", expected = "placed" },
   { id = "roboport-control-hc", pos = { 2, 7 },  item = "roboport",      tier = "hardcore", expected = "placed" },
   { id = "beacon-control-hc",   pos = { -2, 7 }, item = "beacon",        tier = "hardcore", expected = "placed" },
-  { id = "landfill-control-hc", pos = { 1, 7 },  item = "landfill",      tier = "hardcore", expected = "placed" },
+  { id = "brick-control-hc",   pos = { 1, 7 },  item = "stone-brick",   tier = "hardcore", expected = "placed" },
 }
 for _, cas in ipairs(CONTROL_CASES) do
   PLAYER_CASES_A[#PLAYER_CASES_A + 1] = cas
@@ -385,8 +419,9 @@ local function acquire_player()
   local p = game.player or game.get_player(1)
   if not p then return false end
   player = p
-  player.force.set_cease_fire(game.forces.enemy)
-  game.forces.enemy.set_cease_fire(player.force)
+  -- 2.x: the cease_fire STATE argument is required (defaults removed)
+  pcall(function() player.force.set_cease_fire(game.forces.enemy, false) end)
+  pcall(function() game.forces.enemy.set_cease_fire(player.force, false) end)
   log("MATRIX-PLAYER-READY")
   return true
 end
