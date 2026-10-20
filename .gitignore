@@ -1,0 +1,7 @@
+# packaged-mod builds live in dist/ (build output is never tracked)
+dist/
+
+# local scratch
+script-output/
+__pycache__/
+*.pyc
