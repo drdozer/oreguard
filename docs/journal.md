@@ -3,6 +3,71 @@
 Chronological log of agent work sessions. Companion docs: `README.md`
 (features), `mod/changelog.txt` (releases), superproject `issues/oreguard-*.md`.
 
+## Session 2026-10-20 — full devctl-style refactor (process conformance)
+
+Starting point: 0.3.3 post-port layout (`mod/` portal-clean, docs-only extras).
+Portal census: releases 0.1.0–0.3.1 all published, **all Factorio 2.0-declared**
+(the 0.3.3 fv-2.1 work never shipped); portal page has **no description text**
+(API returns no description field); the dlc live-dir `oreguard_0.3.3.zip` is a
+**pre-devctl local build, not the dist zip** (sha differs from `dist/`; the
+live link shadows it in game, so it is inert).
+
+### Changes
+
+- **`envs/`** — two TOML specs (format: superproject `docs/test-envs.md`):
+  `oreguard.toml` (hermetic base-only default check env; `chase_deps = false`
+  so the later dep removal cannot change the env's mod-set) and
+  `er-closure.toml` (elevated-rails data-dir DLC enabled — the real
+  optional-dependency branch).
+- **Dep removal** (superproject issue
+  `oreguard-vestigial-cargo-ships-dep.md` resolved): `? cargo-ships` gone
+  from info.json (zero lua references, port-probe evidence); README's
+  compat section rewritten to match (also fixes a dangling sentence and the
+  stale "Factorio 2.0 and above" line → 2.1).
+- **Changelog backfill** (`oreguard-changelog-version-skew.md` resolved):
+  0.3.3 entry added — fv 2.1 retarget + underground-belt/splitter/pipe
+  allowlist expansion (which never shipped to the portal under any label;
+  portal's 0.3.1 = the rail-planner work) + dep removal note + history
+  corrections. Date = the release rebuild, 2026-10-20.
+- **control.lua**: removed the dead module-level
+  `local allowed_types = get_allowed_types()` snapshot — both event handlers
+  recompute per event; behavior identical.
+- **`portal/`** — page source seeded: `description.md` (authored from
+  README; the live page is empty so no sync risk) and `summary.txt`
+  (verbatim from the live page, so a future `--page-only` push changes
+  nothing); no images yet (mod has no custom art).
+
+### Verification gate (devctl, first class for this mod)
+
+- `devctl mods check oreguard --suite smoke,diff,locale --against :cache`:
+  **PASS** — smoke cache `oreguard-e40e7db7`, diff vs the pre-refactor
+  baseline cache `oreguard-f9cbdc5b`: **0 added / 0 removed / 0 changed**
+  prototypes (data stage provably untouched); locale PASS (the mod's 1
+  message + settings resolve; the 43 dead-name warnings are
+  other-mod/vanilla asteroid prototypes, attributed as such).
+- `devctl mods check oreguard --env er-closure`: **PASS**, and the dump
+  carries the closure evidence: 12/12 resources + the 4 vanilla rail types
+  carry the `oreguard` collision layer; `elevated-straight-rail`,
+  `elevated-curved-rail-a`, `rail-support`, `rail-ramp`,
+  `legacy-straight-rail` carry **0** — the `name == type` filter provably
+  leaves elevated/legacy rail prototypes alone on real DLC data.
+
+### Findings → superproject issues (not fixed this session)
+
+- `issues/oreguard-robots-bypass.md` — construction robots never fire
+  `on_built_entity`; the runtime guard covers player + blueprint placement
+  only, so roboports can route over ore in Hardcore/Mining tiers. Behavior
+  change → own release, not a refactoring commit.
+
+### End state
+
+- Mod repo: refs at HEAD (envs / deps / changelog / control / portal /
+  docs commits). `devctl mods build oreguard --report` audits the release
+  zip; publishing 0.3.3 to the portal is the maintainer's call
+  (`devctl mods publish oreguard`, dry-run default).
+- Superproject: both oreguard issues resolved in-file + robots-bypass filed;
+  pointer bump.
+
 ## Session 2026-10-15 — structural port to superproject standard
 
 Starting point: 0.3.3 at `39c77b7`, repo-root layout, declared fv "2.1",
