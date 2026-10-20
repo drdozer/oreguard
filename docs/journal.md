@@ -62,9 +62,14 @@ live link shadows it in game, so it is inert).
 ### End state
 
 - Mod repo: refs at HEAD (envs / deps / changelog / control / portal /
-  docs commits). `devctl mods build oreguard --report` audits the release
-  zip; publishing 0.3.3 to the portal is the maintainer's call
+  docs / layout commits). `devctl mods build oreguard --report` audits the
+  release zip; publishing 0.3.3 to the portal is the maintainer's call
   (`devctl mods publish oreguard`, dry-run default).
+- Layout fix surfaced by the build: the repo **tracked**
+  `dist/oreguard_0.3.3.zip` from the original import (no .gitignore) —
+  untracked + ignored (commit `020c5f6`); every build now leaves the
+  submodule clean. Release zip: `dist/oreguard_0.3.3.zip` 6191 B,
+  sha256 `6c961b8f…`, 7 files, strict audit ok.
 - Superproject: both oreguard issues resolved in-file + robots-bypass filed;
   pointer bump.
 

@@ -17,7 +17,7 @@ changelog.txt). Root keeps LICENSE and README.md. Per-process extras:
 `envs/` (TOML test-env specs) and `portal/` (page source:
 description.md + summary.txt). No tools, no graphics (no custom art).
 Pre-2026-10-15 there was no AGENTS/docs; process conformance completed
-2026-10-20 (envs + portal + gate runs — see journal).
+2026-10-20 (envs + portal + gate runs + dist/ untracking — see journal).
 
 ## Invariants (reasons in linked docs/issues)
 
