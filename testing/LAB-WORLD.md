@@ -27,11 +27,14 @@ loads your save and runs the case table against these coordinates — see
 | Oil well 1 | center tile **(20, 0)** | ONE crude-oil well per 3×3 block (they are 3×3 entities; blocks must not overlap) |
 | Oil well 2 | center tile **(24, 4)** | same rule |
 | Rail alley `E` | x −3…3, y −8 | 1-tile-high iron-ore strip |
-| Power island | EEI at (−27, 12), substation at (−25, 13) | connected (script adds roboport at (−28, 14) + passive-provider chest at (−22, 13)) |
+| Power island | EEI at (−27, 12), substation at (−25, 13) | connected (script adds roboport at (−28, 14) — and **stocks it with bots** — passive-provider chest at (−22, 13), plus a yellow steel-chest safety net at (−22, 15)) |
 
 - **Do not** place ore anywhere else — the control zone (around (0, 7)) and
   all case positions are asserted to be clean.
 - Amounts don't matter (nothing mines in the run).
+- You don't need to pre-stock the roboport or provider chest — the script
+  inserts construction robots and case items at test time; the steel chest
+  is just a safety net for returned/spilled items.
 - The pumpjack cases build exactly on the well center tiles, so wells must
   sit on odd or even grids as given.
 

@@ -57,6 +57,7 @@ local POWER_ISLAND = {
   substation = { -25, 13 },
   roboport   = { -28, 14 },
   chest      = { -22, 13 },
+  spare_chest = { -22, 15 },  -- steel chest next to the provider chest (safety net)
 }
 
 -- ---------------------------------------------------------------- harness
@@ -226,13 +227,20 @@ end
 local function robot_infra_setup()
   for key, pos in pairs(POWER_ISLAND) do
     local name = ({ eei = "electric-energy-interface", substation = "substation",
-                    roboport = "roboport", chest = "passive-provider-chest" })[key]
+                    roboport = "roboport", chest = "passive-provider-chest",
+                    spare_chest = "steel-chest" })[key]
     local ent = find_or_create_entity(name, pos)
     if not ent or not ent.valid then
       return false, "could not create/adopt " .. name
     end
     robot_infra[key] = ent
   end
+  -- roboports only fly bots inserted into them — stock it (the user's save
+  -- showed none, since script stocking was missing)
+  pcall(function()
+    robot_infra.roboport.insert({ name = "construction-robot", count = 20 })
+    robot_infra.roboport.energy = 100000000
+  end)
   pcall(function() robot_infra.eei.energy = 100000000 end)
   return true
 end
@@ -430,13 +438,17 @@ script.on_init(function()
   -- enemy hard-off (paste-proofing the lab): kill, then no AI, no expansion,
   -- no evolution — repeated in the periodic sweep below.
   pcall(function()
-    game.forces["enemy"].kill_all()
+    game.forces["enemy"].kill_all_units()
     game.forces["enemy"].ai_controllable = false
     game.map_settings.enemy_expansion.enabled = false
     game.forces["enemy"].evolution_factor = 0
     player = game.player or game.get_player(1)
     if player then player.force.set_cease_fire(game.forces.enemy) end
   end)
+  -- spawners/worms are entities, not units — destroy by force filter
+  for _, ent in pairs(surface.find_entities_filtered({ force = "enemy", limit = 1000 })) do
+    pcall(function() ent.destroy() end)
+  end
 end)
 
 script.on_load(function()
@@ -603,7 +615,7 @@ end
 script.on_nth_tick(600, function()
   if surface then
     pcall(function()
-      game.forces["enemy"].kill_all()
+      game.forces["enemy"].kill_all_units()
       game.forces["enemy"].ai_controllable = false
       game.map_settings.enemy_expansion.enabled = false
     end)
