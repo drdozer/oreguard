@@ -38,11 +38,14 @@ specs), portal/ (page source), tools/ (check-families.py). No graphics
      `collision_mask`s — after wiping the env's `mod-settings.dat` (see
      below).
    - *Runtime guard* (control.lua): family-composed allow-set; ghosts
-     (entity/tile) are refused AT PLACEMENT; robots have their own handlers
-     with item-return-to-cargo (revival consumes the ghost first, so no
-     re-place loop); the tile guard honors
-     `oreguard-allow-decorative-tiles` (runtime-global; sole gate for tiles
-     over ore).
+     (entity/tile) are refused AT PLACEMENT; robots have their own handler
+     (revival consumes the ghost first, so no re-place loop): the event-time
+     cargo insert is REFUSED by the engine (returns 0 in 2.1), so recovery
+     falls back to a to-be-looted floor spill at the site, which the same
+     construction drone vacuums and carries to the network's storage chest
+     — verified end-to-end (journal 2026-10-20 evening); the tile guard
+     honors `oreguard-allow-decorative-tiles` (runtime-global; sole gate
+     for tiles over ore).
 3. **Engine-owned pumpjack rule**: pumpjacks are type `mining-drill` with
    `resource_categories = {"basic-fluid"}`; resource prototypes carry
    `category`. The engine refuses pumpjack/solid-ore mismatch before any

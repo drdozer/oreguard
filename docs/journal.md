@@ -495,3 +495,72 @@ deps `base >= 2.1.0`, `? elevated-rails`, `? cargo-ships`.
 - Still open pending maintainer: hand-placement of a rail signal on a
   rail over ore in B (decides placed-vs-engine-refused for b-signal/
   b-chain/b-stop, or reveals a script-geometry fix on my side).
+
+## 2026-10-20 evening — rail-fixture decoding + robot-recovery verified (driver rev 25)
+
+### Instance B rail cases unblocked (b-signal/b-chain/b-stop now PLACED, B green 5/0)
+
+The fixture was the blocker: `create_entity` rails behaved unlike any assumption.
+15 probe rounds (`testing/railprobe/`, via `testing/run-railprobe.py`; windowed
+client, user-visible observations included) decoded the 2.x lattice:
+
+- `defines.direction` is 16-way (east=4, south=8, west=12) but rail
+  `create_entity`/`can_place` consume the value **modulo 8** (8-way rail
+  convention). Vanilla sims confirm: `direction = defines.direction.east` at
+  `(x, -1)`, x even — the odd-y E-W row.
+- Rails sit on the half-tile lattice; piece positions on x+y-even midpoints.
+  `dir=2` at even/even = a horizontal (E-W) piece; `dir=4` at odd/odd =
+  **diagonal pieces** (half-diagonal class — my "E-W line at y=-9" reading was
+  wrong; maintainer's eye corrected it: the diagonals chain toward the
+  horizontal with no gap).
+- Signals attach ONLY at segment-end taper tiles (tile sharing the end node's
+  diagonal corner). Stops attach beside the horizontal 1-2 rows north of the
+  line. Fixture recipe (driver `RAIL_PIECES`): dir-2 pieces at (0,-6)/(2,-6)
+  for the signal spots; dir-4 diagonals at (odd,-9) for the stop spot. It is
+  a diagnostic arrangement, not player-style layout.
+- Build directions: signals dir=2, stops dir=4 (raw values).
+- `LuaEntity.bounding_box`/`find_entities_filtered` area-matching for rails
+  reads an UNROTATED box (±1.7 reach) — presence checks in the harness match
+  by exact position, not window overlap (bit us twice).
+- The 2.x rail cursor item is `rail` (prototype type rail-planner,
+  `straight-rail.placeable_by = {item = "rail"}`). Single-position
+  `build_from_cursor` does nothing with it (drag semantics are unreachable);
+  bare `straight-rail` has NO item.
+
+### Robot path: first real coverage + two mod/harness findings
+
+- **MOD BUG (0.4.0 crash):** `spill_item_stack` called with the 1.x positional
+  signature — 2.x takes a single table. Crashed on the FIRST blocked robot
+  build (on_robot_built_entity, recover_robot_item → spill_stack). Fixed in
+  mod/control.lua. Needs changelog entry at release (0.4.1) — maintainer.
+- `ghost.item_requests` WRITE THROWS in 2.x (the old driver comment claimed
+  read-write; wrong). Script-created entity-ghosts are still robot-built: the
+  implicit request drives bots. Robot gating dropped; 4 formerly-skipped robot
+  cases now run.
+- **Harness killed the carrying drone:** next case's clear_rect swept the
+  drone still idling at the previous build site (user watched it happen:
+  "the drone ceases to exist"). clear_rect now spares construction/logistic
+  robots.
+- **Recovery chain verified with the maintainer's hand-procedure** (do not
+  finish the case until the drone leaves the site; census after 10s):
+  at-event cargo insert returns **0** (cargo write refused mid-event), the
+  fallback spill drops the item to-be-looted at the site, the same drone
+  vacuums it within ~2s, flies home, and **the item lands in the storage
+  chest** (spare_chest=1 for both blocked cases; placed cases show no
+  refund — control). End state equals "carry the unplaceable item back to
+  storage". Recovery log lines (unconditional) added to recover_robot_item.
+
+### Run state
+
+- Instance A green: passed=71 failed=0 skipped=2 (skips = straight-rail/
+  elevated-rail items absent in 2.x). A-side rail cases now expected
+  **guard-blocked** (with fixture rails present the engine places signal/stop;
+  the runtime guard blocks + returns — supersedes the vacuous no-rail
+  "engine-refused" expectations).
+- Instance B green: passed=5 failed=0 skipped=0.
+
+- Maintainer visual confirmation of the recovery chain: "the items were
+  dumped on the floor for decon, and the construction drone then picked
+  those up and took them back to storage — functionally correct". The
+  looted-spill + drone-vacuum IS the delivery mechanism; the at-event cargo
+  insert (returns 0) remains in the code as a best-effort fast path.
