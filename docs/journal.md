@@ -484,3 +484,14 @@ deps `base >= 2.1.0`, `? elevated-rails`, `? cargo-ships`.
 - Rail-signal placement rules (signal-on-rail-over-ore, script-side rail
   lattice + signal direction) — WAITING ON MAINTAINER, per directive:
   ask, don't loop on guesses.
+
+### Walkthrough correction (same day, maintainer walkthrough)
+
+- families.lua:43 ground-rail family = rails + signals + stops; toggle
+  off → the data-stage stamping means rails cannot exist on ore at all →
+  instance-A signal/stop expectations are engine-refused (reverted the
+  guard-blocked flip made earlier; run-m's green ran with exactly these).
+- B side: RAIL_PIECES lacked the stop's tile (-3,-8) — added.
+- Still open pending maintainer: hand-placement of a rail signal on a
+  rail over ore in B (decides placed-vs-engine-refused for b-signal/
+  b-chain/b-stop, or reveals a script-geometry fix on my side).

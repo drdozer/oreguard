@@ -405,10 +405,13 @@ local RAIL_A = {
   -- unstamped configurations. rail-ramp has a real item and places (name
   -- exemption proven); straight-rail/elevated-rail have no cursor item in
   -- 2.1 → pcall'd set_stack records a clean skip.
-  { id = "rail-signal-hc",   area = "alley", pos = { -1, -8 }, item = "rail-signal",       tier = "hardcore", expected = "guard-blocked" },
-  { id = "rail-signal-df",   area = "alley", pos = { 0, -8 },  item = "rail-signal",       tier = "default",  expected = "guard-blocked" },
-  { id = "rail-chain-df",    area = "alley", pos = { 1, -8 },  item = "rail-chain-signal", tier = "default",  expected = "guard-blocked" },
-  { id = "train-stop-df",    area = "alley", pos = { -3, -8 }, item = "train-stop",        tier = "default",  expected = "guard-blocked" },
+  -- engine-refused, NOT guard-blocked: signals need a rail piece beneath
+  -- them, and with the toggle off the stamping means rails cannot exist on
+  -- ore at all. The engine refuses before the guard could ever see one.
+  { id = "rail-signal-hc",   area = "alley", pos = { -1, -8 }, item = "rail-signal",       tier = "hardcore", expected = "engine-refused" },
+  { id = "rail-signal-df",   area = "alley", pos = { 0, -8 },  item = "rail-signal",       tier = "default",  expected = "engine-refused" },
+  { id = "rail-chain-df",    area = "alley", pos = { 1, -8 },  item = "rail-chain-signal", tier = "default",  expected = "engine-refused" },
+  { id = "train-stop-df",    area = "alley", pos = { -3, -8 }, item = "train-stop",        tier = "default",  expected = "engine-refused" },
   { id = "rail-support-df",  area = "alley", pos = { 0, -8 },  item = "rail-support",      tier = "default",  expected = "placed" },
   { id = "rail-ramp-df",     area = "alley", pos = { 1, -8 },  item = "rail-ramp",         tier = "default",  expected = "placed" },
   { id = "straight-rail-hc", area = "alley", pos = { -2, -8 }, item = "straight-rail",     tier = "hardcore", expected = "skip" },
@@ -493,7 +496,7 @@ end
 
 -- rail pieces along the alley are INFRA (script-created, no events fire):
 -- signals can only be placed onto rails, so the matrix ensures 3 pieces.
-RAIL_PIECES = { { -1, -8 }, { 0, -8 }, { 1, -8 } }
+RAIL_PIECES = { { -3, -8 }, { -1, -8 }, { 0, -8 }, { 1, -8 } }
 local clean_probe_done = false
 local function ensure_rail_infra()
     for _, piece in ipairs(RAIL_PIECES) do
