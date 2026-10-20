@@ -47,14 +47,17 @@ local queue
 local q_index = 0
 local stage = ""               -- next / assert / robot-*
 local current_case
+local unbuildable_reason
 local main_before = 0
 local robot_infra = {}
 local robot_case_index = 0
 local robot_ghost
 local robot_wait_until
+local case_wait_until
 local done = false
 local robot_infra_done = false
 local last_harness_err
+local DRIVER_REVISION = 21
 local function seeded_rail()
   local ok, v = pcall(function() return settings.startup["oreguard-allow-ground-rail"].value end)
   if ok then return v == true end
@@ -124,6 +127,11 @@ local function placed_entity_present(cas)
   local area = { { cas.pos[1] - 0.49, cas.pos[2] - 0.49 }, { cas.pos[1] + 0.49, cas.pos[2] + 0.49 } }
   -- tile items: "built" state is the surface tile itself — paved != grass;
   -- guard-blocked restores grass.
+  if cas.tile_name then
+    local tile = surface.get_tile(cas.pos[1], cas.pos[2])
+    TILE_DEBUG = tile and tile.name or "?"
+    return tile and tile.name == cas.tile_name
+  end
   if prototypes.tile[cas.item] then
     local tile = surface.get_tile(cas.pos[1], cas.pos[2])
     TILE_DEBUG = tile and tile.name or "?"
@@ -159,29 +167,57 @@ end
 
 local function case_setup(cas)
   current_case = cas
+  unbuildable_reason = nil
   clear_rect(cas.pos[1], cas.pos[2], 3)
   restore_grass(cas.pos[1], cas.pos[2])
   if cas.tier then set_tier(cas.tier) end
   if cas.tiles ~= nil then set_tiles_toggle(cas.tiles) end
 
   clear_player_cursor()
-  main_before = player.get_main_inventory().get_item_count(cas.item)
-
   if not prototypes.item[cas.item] then
+    main_before = 0
     return -- recorded as skip in the assert stage
   end
+  main_before = player.get_main_inventory().get_item_count(cas.item)
   player.teleport({ cas.pos[1] + 3, cas.pos[2] + 3 })
   local cs_ok = pcall(function()
     player.cursor_stack.set_stack({ name = cas.item, count = 1 })
   end)
   if not cs_ok then
-    main_before = main_before -- unchanged; assert records the skip
+    unbuildable_reason = "cursor_stack refused the item (planner-only rails?)"
     return
   end
-  player.build_from_cursor({ position = { cas.pos[1], cas.pos[2] }, direction = defines.direction.north })
+  local build_pos = cas.tile_name
+    and { cas.pos[1] + 0.5, cas.pos[2] + 0.5 } or { cas.pos[1], cas.pos[2] }
+  local built_ok = pcall(function()
+    player.build_from_cursor({ position = build_pos, direction = defines.direction.north })
+  end)
+  if not built_ok then
+    unbuildable_reason = "build_from_cursor refused (engine unknown-item/other)"
+    return
+  end
+  if prototypes.tile[cas.item] then
+    log(string.format("MATRIX-DIAG %s build-tick tile=%s main=%d toggle=%s",
+      cas.id, tostring(surface.get_tile(cas.pos[1], cas.pos[2]).name),
+      player.get_main_inventory().get_item_count(cas.item),
+      tostring(settings.global["oreguard-allow-decorative-tiles"].value)))
+  end
+  case_wait_until = game.tick + 4
+  stage = "pre-assert"
 end
 
 local function case_assert(cas)
+  local rec = { id = cas.id, expected = cas.expected }
+  if unbuildable_reason or not prototypes.item[cas.item] then
+    rec.pass = nil
+    rec.got = "skip"
+    rec.detail = unbuildable_reason or "item prototype absent (planner-rails / DLC data?)"
+    record(rec)
+    clear_player_cursor()
+    clear_rect(cas.pos[1], cas.pos[2], 3)
+    restore_grass(cas.pos[1], cas.pos[2])
+    return
+  end
   local main_inv = player.get_main_inventory()
   local main_after = main_inv.get_item_count(cas.item)
   local cursor_holds = player.cursor_stack ~= nil
@@ -189,11 +225,10 @@ local function case_assert(cas)
     and player.cursor_stack.count > 0 and true or false
   local present = placed_entity_present(cas)
 
-  local rec = { id = cas.id, expected = cas.expected }
   if not prototypes.item[cas.item] then
     rec.pass = nil
     rec.got = "skip"
-    rec.detail = "item not cursor-placeable (planner-placed rails / DLC data?)"
+    rec.detail = "item prototype absent (planner-placed rails / DLC data?)"
   else
     local got
     if cas.expected == "placed" then
@@ -367,11 +402,11 @@ end
 local TILE_CASES_A = {
   -- landfill is WATER-only in vanilla (engine-refused on grass regardless of
   -- the guard) — placeable tile items: stone-brick / refined-concrete
-  { id = "brick-off-hc",     area = "iron", pos = { -14, 0 }, item = "stone-brick",      tiles = false, expected = "guard-blocked" },
-  { id = "brick-off-df",     area = "iron", pos = { -15, 0 }, item = "stone-brick",      tiles = false, expected = "guard-blocked" },
-  { id = "brick-on-df",      area = "iron", pos = { -16, 1 }, item = "stone-brick",      tiles = true,  expected = "placed" },
-  { id = "concrete-off-df",  area = "iron", pos = { -17, 2 }, item = "refined-concrete", tiles = false, expected = "guard-blocked" },
-  { id = "concrete-on-hc",   area = "iron", pos = { -18, 1 }, item = "refined-concrete", tiles = true,  expected = "placed" },
+  { id = "brick-off-hc",     area = "iron", pos = { -14, 0 }, item = "stone-brick",      tile_name = "stone-path",      tiles = false, expected = "guard-blocked" },
+  { id = "brick-off-df",     area = "iron", pos = { -15, 0 }, item = "stone-brick",      tile_name = "stone-path",      tiles = false, expected = "guard-blocked" },
+  { id = "brick-on-df",      area = "iron", pos = { -16, 1 }, item = "stone-brick",      tile_name = "stone-path",     tiles = true,  expected = "placed" },
+  { id = "concrete-off-df",  area = "iron", pos = { -17, 2 }, item = "refined-concrete", tile_name = "refined-concrete", tiles = false, expected = "guard-blocked" },
+  { id = "concrete-on-hc",   area = "iron", pos = { -18, 1 }, item = "refined-concrete", tile_name = "refined-concrete", tiles = true,  expected = "placed" },
 }
 for _, cas in ipairs(TILE_CASES_A) do
   PLAYER_CASES_A[#PLAYER_CASES_A + 1] = cas
@@ -382,7 +417,7 @@ local CONTROL_CASES = {
   { id = "furnace-control-hc",  pos = { -1, 7 }, item = "stone-furnace", tier = "hardcore", expected = "placed" },
   { id = "roboport-control-hc", pos = { 2, 7 },  item = "roboport",      tier = "hardcore", expected = "placed" },
   { id = "beacon-control-hc",   pos = { -2, 7 }, item = "beacon",        tier = "hardcore", expected = "placed" },
-  { id = "brick-control-hc",   pos = { 1, 7 },  item = "stone-brick",   tier = "hardcore", expected = "placed" },
+  { id = "brick-control-hc",   pos = { 1, 7 },  item = "stone-brick",   tile_name = "stone-path", tier = "hardcore", expected = "placed" },
 }
 for _, cas in ipairs(CONTROL_CASES) do
   PLAYER_CASES_A[#PLAYER_CASES_A + 1] = cas
@@ -457,7 +492,8 @@ function tick_dispatch()
     player_grace_until = game.tick + 1200
     stage = "next"
     write_results()
-    log(string.format("MATRIX-READY cases=%d railtoggle=%s curated=%s oreguard=%s",
+    log(string.format("MATRIX-READY rev=%d cases=%d railtoggle=%s curated=%s oreguard=%s",
+    DRIVER_REVISION,
       #queue, tostring(seeded), tostring(storage.oreguard_lab_curated),
       tostring(script.active_mods["oreguard"])))
   end
@@ -521,12 +557,16 @@ function tick_dispatch()
     return
   end
 
-  if stage == "next" then
+  if stage == "pre-assert" then
+    if game.tick >= case_wait_until then stage = "assert" end
+  elseif stage == "assert-then-next" then
+    stage = "next"
+  elseif stage == "next" then
     q_index = q_index + 1
     local cas = queue[q_index]
     if cas then
       case_setup(cas)
-      stage = "assert"
+      stage = "pre-assert"
     elseif not seeded_rail() then
       -- player queue exhausted -> robot phase (instance A only)
       local ok, err = robot_infra_setup()

@@ -213,11 +213,21 @@ def run_instance(name, root, bin_path, windowed=True, lab=None, leave_open=False
     print(f"--- instance {name}: {inst}")
 
     if lab:
-        save = inst / "saves" / f"{lab}.zip"
+        # canonical fixture location: testing/scratch/saves/<name>.zip
+        # (tracked); instance saves self-migrate into it on first use.
+        save = SCRATCH / "saves" / f"{lab}.zip"
+        local_save = inst / "saves" / f"{lab}.zip"
+        if not save.is_file() and local_save.is_file():
+            save.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(local_save, save)
+            print(f"migrated {local_save} -> {save} (tracked fixture)")
         if not save.is_file():
             sys.exit(f"curated save not found: {save} — run prep + editor first (LAB-WORLD.md)")
+        if local_save.is_file() and save.stat().st_mtime > local_save.stat().st_mtime:
+            shutil.copyfile(save, local_save)  # instance copy refreshed from canonical
         print(f"mode: windowed, curated save {save.name}")
-        cmd = [str(bin_path), "-c", str(inst / "config" / "config.ini"), str(save)]
+        cmd = [str(bin_path), "-c", str(inst / "config" / "config.ini"),
+               "--load-game", str(save)]
     else:
         cmd = [str(bin_path), "-c", str(inst / "config" / "config.ini"),
                "--load-scenario", "oreguard-matrix/oreguard-matrix"]
@@ -286,6 +296,14 @@ def run_instance(name, root, bin_path, windowed=True, lab=None, leave_open=False
         print(f"TIMEOUT after {TIMEOUT_SECONDS}s waiting for {out}")
         return None
     finally:
+        if lab:
+            canonical = SCRATCH / "saves" / f"{lab}.zip"
+            local_save = inst / "saves" / f"{lab}.zip"
+            if local_save.is_file():
+                canonical.parent.mkdir(parents=True, exist_ok=True)
+                if not canonical.is_file() or canonical.stat().st_mtime != local_save.stat().st_mtime:
+                    shutil.copyfile(local_save, canonical)
+                    print(f"canonical save updated: {canonical} (commit it)")
         try:
             if proc.poll() is None:
                 subprocess.run(["pkill", "-f", str(bin_path)], check=False)

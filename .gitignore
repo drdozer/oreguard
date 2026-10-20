@@ -5,6 +5,10 @@ dist/
 script-output/
 __pycache__/
 *.pyc
-# test-rig scratch (testing/scratch): runner regenerates everything
-# (config.ini, saves, mod-list, logs, results); only PLAN.md + runner tracked
-testing/scratch/
+# test-rig scratch (testing/scratch): runner regenerates config/mod-list/
+# logs/results. NAMED FIXTURE SAVES are tracked (reproducibility contract —
+# the matrix runs against the curated lab world: testing/LAB-WORLD.md).
+testing/scratch/*
+!testing/scratch/saves/
+testing/scratch/saves/*
+!testing/scratch/saves/lab.zip

@@ -247,7 +247,22 @@ end)
 -- Tile paving: deny per tile unless the decorative-tile toggle is on.
 -- Shared by the player and robot event streams; is_robot comes from the
 -- call site (LuaPlayer has no .type — the matrix caught that 0.4.0 bug).
+local tile_guard_invocations = 0
+local tile_guard_outcome_log = true
+
 local function enforce_tile_guard(surface, tiles, item_name, carrier, is_robot)
+    tile_guard_invocations = tile_guard_invocations + 1
+    local n = tile_guard_invocations
+    for _, tile in ipairs(tiles) do
+        local probe = surface.find_entities_filtered({
+            area = { { tile.position.x, tile.position.y }, { tile.position.x + 1, tile.position.y + 1 } },
+            type = "resource" })
+        local names = {}
+        for _, r in pairs(probe) do names[#names + 1] = r.name end
+        log(string.format("OreGuard tile-guard #%d tile(%.0f,%.0f) ore-in-area=%d [%s] toggled=%s",
+            n, tile.position.x, tile.position.y, #probe, table.concat(names, " "),
+            tostring(settings.global["oreguard-allow-decorative-tiles"].value)))
+    end
     if settings.global["oreguard-allow-decorative-tiles"].value then
         return
     end
@@ -275,15 +290,21 @@ local function enforce_tile_guard(surface, tiles, item_name, carrier, is_robot)
     end
     surface.set_tiles(restore_tiles, true)
 
+    local returned = -1
     if item_name and item_name ~= "" and prototypes.item[item_name] then
         local stack = { name = item_name, count = #denied }
         local inserted = insert_into(carrier, stack, is_robot)
+        returned = inserted
         if inserted < #denied then
             local spill_position = is_robot and denied[1].position or carrier.position
             debug_log("[OreGuard] Carrier full or absent, spilling " .. (#denied - inserted) .. " of " .. item_name)
             spill_stack(surface, spill_position, { name = item_name, count = #denied - inserted },
                 carrier.force or game.forces.player)
         end
+    end
+    if tile_guard_outcome_log then
+        log(string.format("OreGuard tile-guard #%d outcome: denied=%d restored=%d returned=%d of %s",
+            n, #denied, #restore_tiles, returned, tostring(item_name)))
     end
 
     if is_robot then
