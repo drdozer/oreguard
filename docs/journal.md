@@ -70,6 +70,15 @@ live link shadows it in game, so it is inert).
   untracked + ignored (commit `020c5f6`); every build now leaves the
   submodule clean. Release zip: `dist/oreguard_0.3.3.zip` 6191 B,
   sha256 `6c961b8f…`, 7 files, strict audit ok.
+- **Zip-level provenance audit vs the portal 0.3.1** (portal zip fetched
+  to `.cache/oreguard-0331-vs/`; note: portal downloads 403 the default
+  python UA — needs a browser-ish User-Agent): `data.lua`,
+  `data-final-fixes.lua`, `locale/en/locale.cfg`, `settings.lua`
+  **identical**; control.lua + changelog.txt + info.json changed as
+  recorded above. Bonus finding: the portal 0.3.1 zip shipped `README.md`
+  + `LICENSE` **inside the mod folder** (scaffolding) — the devctl build
+  of 0.3.3 is portal-clean (7 files only), which is exactly what
+  `build --report --strict` defends.
 - Superproject: both oreguard issues resolved in-file + robots-bypass filed;
   pointer bump.
 
