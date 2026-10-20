@@ -156,6 +156,21 @@ away.
   right source — fold into the pending play-test when the game session
   happens). Portal category: "tweaks" (unchanged).
 
+## Session 2026-10-20 (5) — release-preparation groundwork
+
+- Brief skeleton created: `assets-src/ai/oreguard-thumbnail/` (brief.toml —
+  delivery mod/thumbnail.png @288; brief.md content contract; prompts.txt
+  seeded; validates via `devctl mods art ... status`, nothing adopted).
+  Candidate pictures from the parallel art agent can be adopted through it
+  (outside-pipeline runs go in as `reconstructed: true` run records).
+- Parity verified: info.json description == `[mod-description]` (the
+  locale-hooks rule).
+- Release-preparation checklist compiled (see the session report): play-test
+  + screenshot session (gallery + browser-string confirmation), thumbnail
+  adoption → rebuild audit, then the ship runbook (gates → GitHub tag+release
+  → publish --yes → post-hygiene) — all push/publish steps AWAIT APPROVAL,
+  nothing pushed (both repos ahead-of-origin 13/16 commits, local only).
+
 ### End state
 
 - Mod repo: locale/families/control/changelog/AGENTS/journal at HEAD.

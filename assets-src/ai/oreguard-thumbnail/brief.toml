@@ -1,0 +1,18 @@
+# OreGuard cover thumbnail — brief contract (schema lib/artbrief.py v0)
+# Delivery: one file, mod/thumbnail.png (zip root of the deployable; portal
+# + in-game browser thumbnail). Generated at 512, delivered at 288.
+spec_version = 1
+description = "OreGuard cover thumbnail: an ore patch kept visible and guarded by drills/pumpjacks, factory building politely around it"
+
+[delivery]
+target = "mod/thumbnail.png"
+sizes = [288]
+
+[generation]
+width = 512
+height = 512
+steps = 8
+
+[review]
+sizes = [288, 144]
+sheet = "contact-sheet-288.png"
