@@ -1,9 +1,9 @@
 {
   "name": "oreguard",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "title": "OreGuard",
   "author": "nmrp3",
-  "description": "Prevents building over ore except for mining drills, power poles, belts, beacons, pipes, roboports, boxes, and furnaces.",
+  "description": "Prevents building over ore, except for tiered allow-lists (drills & pumpjacks, poles, belts, pipes, etc.) plus toggles for decorative tiles and ground rail over ore. Elevated rails span ore freely.",
   "factorio_version": "2.1",
   "dependencies": ["base >= 2.1.0", "? elevated-rails"]
 }

@@ -1,12 +1,19 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.3.3
+Version: 0.4.0
 Date: 2026-10-20
   Features:
   - Factorio 2.1 compatibility: factorio_version 2.0 -> 2.1, dependency floor base >= 2.1.0.
   - Underground belts/splitters and underground pipes are now allowed wherever transport belts and pipes are allowed on ore.
+  - Modular settings: tile paving over ore is governed by its own runtime toggle ("Allow decorative tiles over ore"); the former Decorative tier is gone (existing saves fall back to the Default tier — flip the toggle to keep paving tiles).
+  - New startup toggle "Allow rail tracks, signals and stations over ore": ground rail no longer carries the ore collision layer and the rail planner is no longer forced onto elevated bridges across ore.
+  - Construction robots now obey the guard: blocked builds are dismantled and the item returned to the placing robot's cargo; robot-placed tiles on ore are restored likewise.
+  - Blocked blueprint/shift-placed ghosts are refused at placement instead of waiting to be blocked at revival; blocked ghosts left by older saves are removed after the update.
+  - The floating warning text is composed from the active families, so it always matches the current tier and toggles.
+  - "Mining" tier renamed "Belt Mining" (label only — existing saves keep their setting).
+  - Pumpjacks are allowed wherever mining drills are; the engine itself restricts pumpjacks to fluid resources (oil, brine, geysers), which OreGuard does not alter.
   Packaging:
-  - Removed the vestigial optional dependency on cargo-ships (no code referenced it; elevated-rails remains the only optional dependency, and it is genuinely used).
-  - Changelog hygiene: entries below are corrected against repo history. The entry above was mislabelled/misdated (no Factorio 2.0-era portal release ever shipped the underground-belt features listed under it; portal releases to date are 0.1.0-0.3.1, all Factorio 2.0-declared).
+  - Removed the vestigial optional dependency on cargo-ships (elevated-rails remains the only optional dependency, and it is genuinely used).
+  - Changelog hygiene: portal releases to date are 0.1.0-0.3.1, all Factorio 2.0-declared; entries below keep their original labels/dates (the 0.3.2 entry predates the underground-belt features it describes, which first ship here).
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.2
 Date: 2025-01-16

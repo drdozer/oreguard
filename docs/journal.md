@@ -3,6 +3,89 @@
 Chronological log of agent work sessions. Companion docs: `README.md`
 (features), `mod/changelog.txt` (releases), superproject `issues/oreguard-*.md`.
 
+## Session 2026-10-20 (2) — 0.4.0: modular settings & enforcement
+
+Starting point: 0.3.3 post-refactor (session 1), gate green. User decisions
+(R1–R7) locked: decorative dropped in favour of a tile toggle; "mining" kept
+as the stored value with a locale-only "Belt Mining" relabel (R2); ground-rail
+toggle implemented as toggle-driven layer adjustment (R3+R4); ghost-level
+refusal + robot guards (R5); systematic floating text (R6); 0.4.0, target
+2.1.* (R7).
+
+### The pumpjack question resolved itself (no code change)
+
+Vanilla data (base prototypes + the cached dump): pumpjack is
+type `mining-drill` with `resource_categories = {"basic-fluid"}`; resource
+prototypes carry `category` (crude-oil/lithium-brine/sulfuric-acid-geyser/
+fluorine-vent = basic-fluid; solid ores uncategorised or `hard-solid`). The
+engine refuses pumpjack/category mismatches BEFORE events fire — a pumpjack
+over solid ore is engine-impossible, and over oil the current mod already
+allows it (type `mining-drill` is in every tier). The earlier "pumpjack
+blocked in all tiers" claim was wrong (static message artifact). SA's
+big-mining-drill rides the same mechanism (`basic-solid` + `hard-solid`).
+Action: documentation only + an in-game probe.
+
+### Implementation
+
+- `mod/families.lua` (new): family → type lists, tier compositions, tier
+  values; pumpjack engine-rule note.
+- `mod/settings.lua`: `oreguard-allow-decorative-tiles` (runtime-global,
+  default false) + `oreguard-allow-ground-rail` (startup, default false —
+  a runtime toggle could never un-stamp data-stage layers); decorative
+  dropped; `mining` value kept (only the label changed).
+- `mod/locale/en/locale.cfg`: `[oreguard-family]` display names;
+  `cannot-build` template (`__1__`); new setting names/descriptions;
+  labels updated. (Family keys are runtime-referenced only — the --locale
+  gate scans prototype localised fields, so the composed message is not
+  statically verified there.)
+- `mod/control.lua` (rewrite): family-composed allow-set; floating text
+  composed from the active families each event; entity-ghost/tile-ghost
+  refusal at placement (destroyed, so robots never inherit blocked jobs);
+  `on_robot_built_entity` / `on_robot_built_tile` handlers (item back to
+  the robot's cargo — revival consumes the ghost, so no re-place loop;
+  tile item via `event.item` or the tile's `minable.result`);
+  `on_configuration_changed` sweep deletes blocked entity-ghosts over ore
+  from pre-0.4.0 saves. Player-path recovery semantics preserved
+  (incl. the destroy-without-player edge).
+- `mod/data-final-fixes.lua`: rail stamping gated by the startup toggle;
+  ore-side stamping + the name==type elevated exemption unchanged.
+- `tools/check-families.py` (new): parses families.lua + locale + settings
+  and fails loudly on drift (first run caught my own locale/parser bug —
+  fixed in the checker itself).
+
+### Verification (dump-gate evidence)
+
+- `devctl mods check oreguard --suite smoke,diff,locale --against :cache`:
+  PASS — content cache `oreguard-63886ba0`, diff 0/0/0 vs the pre-refactor
+  baseline `oreguard-e40e7db7`, locale PASS (0 dead, 0 missing). NOTE: the
+  data dump has NO mod-setting category — settings coverage is
+  check-families.py + the locale suite, not the diff walker.
+- er-closure env: PASS (`oreguard-8d3c4f22`); resources 12/12 + 4 ground
+  rails stamped, elevated/ramp/support/legacy untouched (still true).
+- **Startup flip-probe** (rail toggle ON): flipping the default and wiping
+  the env's `mod-settings.dat` yields exactly the expected diff —
+  `curved-rail-a/b`, `half-diagonal-rail`, `straight-rail`
+  `collision_mask` changed; everything else 0. First probe attempt showed
+  0/0/0, which exposed the gotcha: **`mod-settings.dat` persists the
+  settings STATE — a flipped `default_value` is invisible until it is
+  wiped**. The engine prefers the persisted file over mod defaults.
+  (Also: `:cache` picks the newest dump with a different content hash —
+  docs-only edits shift the hash with identical game data.)
+- Floors: `--factorio factorio_2_experimental` (2.1.21) PASS — surfaced a
+  latent `lib/check.py` NameError (`spec_path` undefined in the floors
+  branch); fixed + superproject selftest green.
+- Release build: after the docs commit (below).
+
+### Open: in-game play-test suite (needs a game session)
+
+The dump gate cannot see runtime behavior. Scenario rig (docs/testing.md
+§6–7; oreguard has no `testing/` yet) must cover: pumpjack over oil
+(Hardcore) + engine refusal on solid ore; robot builds (blocked →
+destroyed, item into robot cargo; ghost refusal at blueprint placement);
+tile restore both streams + toggle on/off; ground-rail toggle placement +
+planner behavior; floating-text composition matches tier; post-update ghost
+sweep. Filed as the release's play-test gate before `publish --yes`.
+
 ## Session 2026-10-20 — full devctl-style refactor (process conformance)
 
 Starting point: 0.3.3 post-port layout (`mod/` portal-clean, docs-only extras).

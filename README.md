@@ -1,50 +1,67 @@
 # OreGuard
 
-OreGuard is a Factorio 2 mod that protects ore patches from over-building.
+OreGuard is a Factorio 2.1 mod that protects ore patches from over-building.
 
 ## Features
 
-- **Ore Guarding**: Prevents building most entities and flooring tiles directly on top of ore patches.
-- **Tiered Restrictions**: Allows placement of certain entities on ore, depending on the selected restriction tier.
-- **Item Recovery**: Returns blocked items to the player's inventory or spills them on the ground if inventory is full.
-- **Visual Feedback**: Displays a warning message as floating text when a build is blocked.
-- **Rail Integration**: Prevents regular rails from being built on ore patches while allowing elevated rails to span over them.
-- **Rail Planner Support**: Automatically creates elevated rail bridges when the rail planner encounters ore patches (requires elevated rails mod).
-- **Blueprint Support**: Works correctly with blueprints containing rails over ore patches.
+- **Ore Guarding**: Prevents building most entities and tiles directly on top of ore patches — your factory must respect the natural layout of resources.
+- **Tiered Restrictions**: A map setting selects how much building is allowed on ore, grouped into families.
+- **Modular Toggles**: Tile paving and ground rail have their own toggles, independent of the tier.
+- **Item Recovery**: Returns blocked items to the player's inventory (or the placing robot's cargo) — or spills them if full.
+- **Visual Feedback**: A floating-text warning always lists the currently allowed families, so it matches the active tier and toggles.
+- **Rail Integration**: Regular rails are kept off ore, while elevated rails, rail supports and rail ramps span freely. The rail planner automatically routes elevated bridges when a regular rail line would hit ore.
+- **Ghost Refusal**: Blocked ghosts (blueprint or shift-placement) are refused at placement instead of silently failing later at build time.
 
-## Restriction Tiers
+## Settings
 
-| Tier        | Mining Drill | Power Pole | Belt | Pipe | Roboport | Logistic Chest | Container | Beacon | Furnace | Flooring |
-|-------------|:-----------:|:----------:|:----:|:----:|:--------:|:--------------:|:---------:|:------:|:-------:|:--------:|
-| Hardcore    |      ✔      |            |      |      |          |                |           |        |         |          |
-| Mining      |      ✔      |     ✔      |  ✔   |  ✔   |          |                |           |        |         |          |
-| Bot Mining  |      ✔      |     ✔      |  ✔   |  ✔   |    ✔     |       ✔        |           |        |         |          |
-| Default     |      ✔      |     ✔      |  ✔   |  ✔   |    ✔     |       ✔        |     ✔     |   ✔    |    ✔    |          |
-| Decorative  |      ✔      |     ✔      |  ✔   |  ✔   |    ✔     |       ✔        |     ✔     |   ✔    |    ✔    |    ✔     |
+### Tier (per map)
 
-- The restriction tier can be set in the mod settings (per map).
-- Higher tiers allow more types of entities to be placed on ore patches.
+| Family | Hardcore | Belt Mining | Bot Mining | Default |
+|---|:---:|:---:|:---:|:---:|
+| Drills **& pumpjacks** | ✔ | ✔ | ✔ | ✔ |
+| Power poles | | ✔ | ✔ | ✔ |
+| Belts (with undergrounds & splitters) | | ✔ | ✔ | ✔ |
+| Pipes (with undergrounds) | | ✔ | ✔ | ✔ |
+| Roboports & logistic chests | | | ✔ | ✔ |
+| Containers | | | | ✔ |
+| Beacons | | | | ✔ |
+| Furnaces | | | | ✔ |
+
+- Matches are by entity type, so any mod's entity of one of these types is treated the same.
+- Pumpjacks are mining drills as far as OreGuard is concerned; the engine itself restricts pumpjacks to fluid resources (oil, brine, geysers) — a pumpjack can never be planted on solid ore, no matter the tier.
+
+### Toggles
+
+| Setting | Scope | Effect |
+|---|---|---|
+| Allow decorative tiles over ore | map, changeable anytime | Landfill-like tiles may be paved over ore. Blocked tiles are restored and their items returned. |
+| Allow rail tracks, signals and stations over ore | startup (per map load) | Ground rail carries no ore collision layer and the guard allows `straight-rail`, `half-diagonal-rail`, `curved-rail-a/b`, `rail-signal`, `rail-chain-signal` and `train-stop` over ore. The rail planner is no longer forced onto elevated bridges across ore. |
+| Modify ore collision masks | startup | The engine-side rail blocking that pairs with the tier guard. Skipped for ground-rail prototypes when the ground-rail toggle is on. |
 
 ## Rail System
 
-There is a startup setting to prevent regular rails from being built on ore patches. When enabled:
+With the ground-rail toggle off (default):
 
-- **Regular rails** are blocked from being built on ore patches
-- **Elevated rails, rail ramps, and rail supports** can be placed over ore patches
-- **Rail planner** automatically creates elevated rail solutions when encountering ore
-- **Setting can be disabled** in startup settings if you don't want this behavior
+- **Regular rails** cannot be built on ore (engine collision layer + guard).
+- **Elevated rails, rail ramps, and rail supports** can be placed over ore in every tier.
+- **Rail planner** automatically creates elevated rail bridges when a regular rail line would conflict with ore.
 
 ## Compatibility
 
-- Designed for Factorio 2.1 (declared `factorio_version "2.1"`, dependency floor `base >= 2.1.0`).
-- Elevated rails can span over ore patches (optional integration; works with the elevated rails DLC).
+- Designed for Factorio 2.1 (dependency floor `base >= 2.1.0`).
+- Optional integration with the elevated-rails DLC (see the Rail System above).
 - Should be compatible with most other mods, but may conflict with mods that alter tile or entity placement logic or that provide custom rails.
+
+## Migration from 0.3.x
+
+- The **Decorative** tier is gone: saves that used it fall back to **Default**; flip "Allow decorative tiles over ore" to keep paving over ore.
+- The **Mining** tier is now labelled **Belt Mining** (same rules; existing saves keep their setting).
 
 ## Related Mods
 
 There are various mods that fill the map with ore, and restrict what can be built upon it, so as to give an interesting space-constraint game.
 This is not that.
-OreGuard is designed to prevent factories from spawling over the naturally spawned ore patches, so that your factory must respect the natural resources of the world.
+OreGuard is designed to prevent factories from sprawling over the naturally spawned ore patches, so that your factory must respect the natural resources of the world.
 
 ## License
 
