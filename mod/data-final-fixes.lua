@@ -23,7 +23,6 @@ data:extend({
 })
 
 local ore_modified_count = 0
-local rail_modified_count = 0
 
 -- Function to add oreguard layer to collision mask
 local function add_oreguard_layer(prototype, entity_name, entity_type)
@@ -49,17 +48,31 @@ local rail_types = {
     "curved-rail-b"
 }
 
-for _, rail_type in ipairs(rail_types) do
-    if data.raw[rail_type] then
-        for name, prototype in pairs(data.raw[rail_type]) do
-            -- Only modify rails where the name matches the type (excludes waterways, etc.)
-            if name == rail_type then
-                if add_oreguard_layer(prototype, name, rail_type) then
-                    rail_modified_count = rail_modified_count + 1
+-- Ground rails carry the oreguard layer only while the startup toggle
+-- oreguard-allow-ground-rail is OFF: that layer is exactly what makes the
+-- engine refuse rail placement over ore. With the toggle on the stamping is
+-- skipped (ore keeps its layer, so the ore-vs-rail pair never matches and
+-- ground rails place freely; elevated rail, rail-support and rail-ramp are
+-- never stamped in either branch thanks to the name == type filter below).
+local stamp_ground_rails = not settings.startup["oreguard-allow-ground-rail"].value
+local rail_modified_count = 0
+
+if stamp_ground_rails then
+    for _, rail_type in ipairs(rail_types) do
+        if data.raw[rail_type] then
+            for name, prototype in pairs(data.raw[rail_type]) do
+                -- Only modify rails where the name matches the type
+                -- (excludes waterways, etc.)
+                if name == rail_type then
+                    if add_oreguard_layer(prototype, name, rail_type) then
+                        rail_modified_count = rail_modified_count + 1
+                    end
                 end
             end
         end
     end
+else
+    log("OreGuard: ground rail stamping skipped (oreguard-allow-ground-rail is on)")
 end
 
 log("OreGuard: Modified collision masks for " .. ore_modified_count .. " ore entities")
