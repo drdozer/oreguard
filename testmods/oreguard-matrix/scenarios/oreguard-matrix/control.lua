@@ -427,6 +427,16 @@ end
 script.on_init(function()
   surface = game.get_surface(1)
   curate_world()
+  -- enemy hard-off (paste-proofing the lab): kill, then no AI, no expansion,
+  -- no evolution — repeated in the periodic sweep below.
+  pcall(function()
+    game.forces["enemy"].kill_all()
+    game.forces["enemy"].ai_controllable = false
+    game.map_settings.enemy_expansion.enabled = false
+    game.forces["enemy"].evolution_factor = 0
+    player = game.player or game.get_player(1)
+    if player then player.force.set_cease_fire(game.forces.enemy) end
+  end)
 end)
 
 script.on_load(function()
@@ -592,6 +602,11 @@ end
 
 script.on_nth_tick(600, function()
   if surface then
+    pcall(function()
+      game.forces["enemy"].kill_all()
+      game.forces["enemy"].ai_controllable = false
+      game.map_settings.enemy_expansion.enabled = false
+    end)
     for _, ent in pairs(surface.find_entities_filtered({ force = "enemy" })) do
       pcall(function() ent.destroy() end)
     end
