@@ -100,6 +100,12 @@ def setup_instance(name: str, root: pathlib.Path):
                 text += f"\nwrite-data={inst}\n"
         else:
             text += f"\n[path]\nread-data={root / 'data'}\nwrite-data={inst}\n"
+        # no update/login prompts in a testing loop
+        text = re.sub(r"(?m)^check-updates=.*$", "", text)
+        if "[other]" in text:
+            text = re.sub(r"(?m)^(\[other\]\n)", r"\1check-updates=false\n", text, count=1)
+        else:
+            text += "\n[other]\ncheck-updates=false\n"
         cfg.write_text(text)
     else:
         if not cfg.is_file():

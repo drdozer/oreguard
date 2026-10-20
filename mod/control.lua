@@ -118,9 +118,10 @@ local function item_for(entity)
 end
 
 -- Players insert directly; construction robots receive the item back in
--- their cargo inventory.
-local function insert_into(carrier, stack)
-    if carrier.type == ROBOT then
+-- their cargo inventory. is_robot comes from the call site (LuaPlayer has
+-- no .type — the behavior matrix caught this read crashing the tile path).
+local function insert_into(carrier, stack, is_robot)
+    if is_robot then
         local inv = carrier.get_inventory(defines.inventory.robot_cargo)
         return inv and inv.insert(stack) or 0
     end
@@ -276,7 +277,7 @@ local function enforce_tile_guard(surface, tiles, item_name, carrier, is_robot)
 
     if item_name and item_name ~= "" and prototypes.item[item_name] then
         local stack = { name = item_name, count = #denied }
-        local inserted = insert_into(carrier, stack)
+        local inserted = insert_into(carrier, stack, is_robot)
         if inserted < #denied then
             local spill_position = is_robot and denied[1].position or carrier.position
             debug_log("[OreGuard] Carrier full or absent, spilling " .. (#denied - inserted) .. " of " .. item_name)
