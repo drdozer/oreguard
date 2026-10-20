@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.3
+Date: 2026-10-20
+  Features:
+  - Factorio 2.1 compatibility: factorio_version 2.0 -> 2.1, dependency floor base >= 2.1.0.
+  - Underground belts/splitters and underground pipes are now allowed wherever transport belts and pipes are allowed on ore.
+  Packaging:
+  - Removed the vestigial optional dependency on cargo-ships (no code referenced it; elevated-rails remains the only optional dependency, and it is genuinely used).
+  - Changelog hygiene: entries below are corrected against repo history. The entry above was mislabelled/misdated (no Factorio 2.0-era portal release ever shipped the underground-belt features listed under it; portal releases to date are 0.1.0-0.3.1, all Factorio 2.0-declared).
+---------------------------------------------------------------------------------------------------
 Version: 0.3.2
 Date: 2025-01-16
   Features:
