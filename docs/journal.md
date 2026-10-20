@@ -138,6 +138,24 @@ away.
 - Optional future: a structured in-game docs page (e.g. via informatron)
   mirroring the README matrix.
 
+## Session 2026-10-20 (4) — portal text pass (nothing pushed live)
+
+- `portal/description.md`: fixed the stale "Hardcore (mining drills only)"
+  parenthetical (0.4.0 labels say drills & pumpjacks) and named the tiles
+  toggle by its actual setting title. Rest of the page source was already
+  0.4.0-current (session 2); page was empty before this cycle, so no
+  legacy text to unwind.
+- `portal/summary.txt`: rewritten for the modular release (336 chars —
+  within the portal's 500-char limit); the live page still shows the old
+  0.3.1-era summary.
+- **Live-page sync deferred BY INSTRUCTION**: nothing pushed to the portal
+  (no --page-only, no publish, no dry-run) and no git push — the repo page
+  source (description.md + summary.txt) is the source of truth and will go
+  live with the 0.4.0 release upload or an approved separate page push.
+- Gallery: still no assets (no custom art; a screenshot session is the
+  right source — fold into the pending play-test when the game session
+  happens). Portal category: "tweaks" (unchanged).
+
 ### End state
 
 - Mod repo: locale/families/control/changelog/AGENTS/journal at HEAD.

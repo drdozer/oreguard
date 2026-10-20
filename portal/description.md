@@ -4,18 +4,19 @@ shape of the world's resources instead of sprawling over them.
 
 ## How it works
 
-- **Tiered restrictions** (map setting): Hardcore (mining drills only) →
-  Belt Mining (plus poles, belts, pipes) → Bot Mining (plus roboports,
-  logistic chests) → Default (plus containers, beacons, furnaces). Belt and
-  pipe families include their undergrounds/splitters; drills include
-  pumpjacks (which the engine itself keeps to fluid resources).
+- **Tiered restrictions** (map setting): Hardcore (drills & pumpjacks
+  only) → Belt Mining (plus poles, belts, pipes) → Bot Mining (plus
+  roboports, logistic chests) → Default (plus containers, beacons,
+  furnaces). Belt and pipe families include their undergrounds/splitters;
+  drills include pumpjacks (which the engine itself keeps to fluid
+  resources).
 - **Item recovery**: a blocked entity is dismantled and returned to your
   inventory — or the placing robot's cargo — and spilled if full, with a
   floating-text warning that always lists the currently allowed families.
 - **Ghost refusal**: blocked ghosts from blueprints or shift-placement are
   refused immediately, so your roboports never try to build them.
 - **Floors are guarded too**: tiles cannot be paved over ore unless you
-  enable the decorative-tiles toggle.
+  enable the "Allow decorative tiles over ore" toggle.
 
 ## Rails
 

@@ -1,1 +1,1 @@
-Prevents building over ore except for things needed for mining. Can be configured for various levels of restriction.
+OreGuard keeps ore patches for mining: tiered allowances (drills & pumpjacks, poles, belts, pipes - more with higher tiers) protect naturally spawned resources from being built over. Toggles for decorative tiles and ground rail over ore; elevated rails span ore freely. Blocked items are returned; robots and ghosts obey the same rules.
