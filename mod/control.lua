@@ -343,3 +343,32 @@ script.on_configuration_changed(function(data)
         log("OreGuard: migration swept " .. swept .. " blocked ghost(s) from pre-0.4.0 saves")
     end
 end)
+-- Remote interface: integration/test entry points for runtime settings.
+-- Engine policy: runtime-global settings can only be written by the owning
+-- mod (or the player in the settings UI) — so the matrix harness
+-- (mods/oreguard/testing/run-matrix.py) drives tiers/toggles through these
+-- functions, which execute in OreGuard's own ownership context.
+remote.add_interface("oreguard", {
+    -- tier: "hardcore" | "mining" | "bot-mining" | "default"
+    set_tier = function(tier)
+        local valid = { hardcore = true, mining = true, ["bot-mining"] = true, ["default"] = true }
+        if valid[tier] then
+            settings.global["oreguard-tier"] = { value = tier }
+            log("OreGuard remote: tier -> " .. tier)
+            return true
+        end
+        return false, "invalid tier: " .. tostring(tier)
+    end,
+    -- allow/decorative-tiles toggle (runtime-global)
+    set_tiles_toggle = function(on)
+        settings.global["oreguard-allow-decorative-tiles"] = { value = on == true }
+        log("OreGuard remote: decorative tiles -> " .. tostring(on == true))
+        return true
+    end,
+    get_state = function()
+        return {
+            tier = settings.global["oreguard-tier"].value,
+            tiles = settings.global["oreguard-allow-decorative-tiles"].value,
+        }
+    end,
+})

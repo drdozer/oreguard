@@ -16,8 +16,12 @@ safe to run while other agents hold lib/ in flight.
 
 import json
 import os
+import re
+
 import pathlib
 import shutil
+import socket
+import struct
 import subprocess
 import sys
 import time
@@ -79,11 +83,30 @@ def setup_instance(name: str, root: pathlib.Path):
     (inst / "mods").mkdir(parents=True, exist_ok=True)
 
     cfg = inst / "config" / "config.ini"
-    cfg.write_text(
-        "[path]\n"
-        f"read-data={root / 'data'}\n"
-        f"write-data={inst}\n"
-    )
+    # Derive from the MAIN signed-in client config when available: kills the
+    # update/login modals that otherwise block windowed runs (they can only
+    # be dismissed by a human). [path] lines are patched to the instance.
+    main_cfg = root.parent / "config" / "config.ini"   # <install>/config/…
+    # careful: root IS the install dir; config lives at <install>/config
+    main_cfg = root / "config" / "config.ini"
+    if main_cfg.is_file():
+        text = main_cfg.read_text()
+        if "[path]" in text:
+            text = re.sub(r"(?m)^read-data=.*$", f"read-data={root / 'data'}", text)
+            if re.search(r"(?m)^write-data=", text):
+                text = re.sub(r"(?m)^write-data=.*$", f"write-data={inst}", text)
+            else:
+                text += f"\nwrite-data={inst}\n"
+        else:
+            text += f"\n[path]\nread-data={root / 'data'}\nwrite-data={inst}\n"
+        cfg.write_text(text)
+    else:
+        if not cfg.is_file():
+            cfg.write_text(
+                "[path]\n"
+                f"read-data={root / 'data'}\n"
+                f"write-data={inst}\n"
+            )
     (inst / "server-settings.json").write_text(json.dumps(SERVER_SETTINGS))
     (inst / "mods" / "mod-list.json").write_text(json.dumps(MOD_LIST))
 
@@ -268,7 +291,7 @@ def main():
     if "--lab" in argv:
         argv = [a for a in argv if a != "--lab"]
         lab = "lab"
-    args = argv or ["a"]
+    args = [a for a in argv if not a.startswith("--")] or ["a"]
     root = game_root(); bin_path = game_bin(root)
     print(f"factorio: {bin_path}")
     rc = 0

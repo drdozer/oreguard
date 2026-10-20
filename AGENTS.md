@@ -69,6 +69,15 @@ specs), portal/ (page source), tools/ (check-families.py). No graphics
 ## Verification quick recipe (devctl verbs)
 
 - Sync check: `python3 tools/check-families.py` (standalone; zero deps).
+- Remote interface: `remote.call("oreguard", ...)` — set_tier/set_tiles_toggle/
+  get_state (runtime settings are owner-only; the behavior matrix drives them
+  through this). Runtime-only, no dump effect.
+- Behavior matrix live runs: `python3 testing/run-matrix.py a --lab` (curated
+  lab save, windowed — ONE human menu click) / `a --headless` (robot-only;
+  player cases auto-skip). Robot ghost mechanism is engine-blocked headless
+  (item-request-proxy refuses health-less ghosts; ghost.item_requests is
+  read-only in 2.x) — pending either the 2.x blueprint-record API or a human
+  probe; robot case failures record as skips.
 - Default gate: `devctl mods check oreguard --suite smoke,diff,locale`
   (envs/oreguard.toml). NOTE the data dump contains NO mod-setting category
   — settings coverage comes from check-families + the locale suite.
