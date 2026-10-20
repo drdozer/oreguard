@@ -18,7 +18,10 @@ local CARVE = { x0 = -150, y0 = -150, x1 = 150, y1 = 150 } -- spec: LAB-WORLD.md
 local FIXTURES = {
   iron   = { item = "iron-ore",   amount = 50000,  x0 = -18, x1 = -14, y0 = 0, y1 = 4 },
   copper = { item = "copper-ore", amount = 50000,  x0 = 10,  x1 = 14,  y0 = 0,  y1 = 4 },
-  alley  = { item = "iron-ore",   amount = 50000,  x0 = -3,  x1 = 3,   y0 = -8, y1 = -8 },
+  -- widened 2026-10-20 (probe rounds 9–15): the rail-case entities (signals,
+  -- chain, train-stop) place at tiles 1.5-2 rows off the track lines, so the
+  -- strip needs vertical depth for their footprints to be over ore.
+  alley  = { item = "iron-ore",   amount = 50000,  x0 = -3,  x1 = 3,   y0 = -10, y1 = -6 },
 }
 -- oil wells: crude-oil is a 3x3 entity — one well per non-overlapping 3x3
 -- block, at the block CENTER; pumpjack cases anchor the same center tiles.
@@ -56,8 +59,9 @@ local robot_wait_until
 local case_wait_until
 local done = false
 local robot_infra_done = false
+local pending_censuses = {}    -- deferred { until_tick, item, site } after robot cases
 local last_harness_err
-local DRIVER_REVISION = 22
+local DRIVER_REVISION = 25
 local function seeded_rail()
   local ok, v = pcall(function() return settings.startup["oreguard-allow-ground-rail"].value end)
   if ok then return v == true end
@@ -110,12 +114,17 @@ local function clear_rect(x, y, reach)
   local area = { { x - reach, y - reach }, { x + reach, y + reach } }
   for _, ent in pairs(surface.find_entities_filtered({ area = area })) do
     pcall(function()
-      if ent.type ~= "resource" and ent.valid and ent.name ~= "character" then
+      -- spare drones: the carrying drone of the previous blocked build idles
+      -- right at the old build site; the next case's cleanup must not kill it
+      if ent.type ~= "resource" and ent.valid and ent.name ~= "character"
+          and ent.type ~= "construction-robot" and ent.type ~= "logistic-robot" then
         ent.destroy()
       end
     end)
   end
 end
+
+-- (rail ensure call lives below; forward-gated by the nil check in case_setup)
 
 local function restore_grass(x, y)
   surface.set_tiles({ { name = GRASS, position = { x, y } } }, true)
@@ -141,10 +150,23 @@ local function placed_entity_present(cas)
   local proto = prototypes.item[cas.item]
   if proto and proto.place_result then ptype = proto.place_result.type end
   if ptype then
-    if #surface.find_entities_filtered({ area = area, type = ptype }) > 0 then return true end
+    -- rail-attached entities land at tile-grid positions 0.5-1 off the case
+    -- tile (probed: signals at tile centers, stops at tile corners); widen
+    -- the collision-window for them (the filter matches collision overlap)
+    local reach = RAIL_ATTACHED and RAIL_ATTACHED[cas.item] and 1.6 or 0.49
+    if #surface.find_entities_filtered({
+        area = { { cas.pos[1] - reach, cas.pos[2] - reach },
+                 { cas.pos[1] + reach, cas.pos[2] + reach } },
+        type = ptype }) > 0 then return true end
   end
-  for _, ent in pairs(surface.find_entities_filtered({ area = area })) do
-    if ent.type ~= "resource" then return true end
+  -- generic fallback: any non-resource entity. NOT used for rail-attached
+  -- items — the fixture rails legitimately sit inside the window (their
+  -- bodies overhang the case tile) and only the ptype scan above is
+  -- definitive for signals/stops.
+  if not (RAIL_ATTACHED and RAIL_ATTACHED[cas.item]) then
+    for _, ent in pairs(surface.find_entities_filtered({ area = area })) do
+      if ent.type ~= "resource" then return true end
+    end
   end
   return false
 end
@@ -170,6 +192,9 @@ local function case_setup(cas)
   unbuildable_reason = nil
   clear_rect(cas.pos[1], cas.pos[2], 3)
   restore_grass(cas.pos[1], cas.pos[2])
+  if RAIL_ATTACHED and RAIL_ATTACHED[cas.item] and ensure_rail_infra then
+    ensure_rail_infra() -- the clear above wipes nearby fixture rails; re-lay
+  end
   if cas.tier then set_tier(cas.tier) end
   if cas.tiles ~= nil then set_tiles_toggle(cas.tiles) end
 
@@ -197,21 +222,59 @@ local function case_setup(cas)
         area = { { build_pos[1] - 0.5, build_pos[2] - 0.5 }, { build_pos[1] + 0.5, build_pos[2] + 0.5 } },
         type = "resource" })
     local rm = res[1] and res[1].prototype.collision_mask.layers or {}
-    local can = player.can_place_entity({ name = cas.item, position = build_pos })
     local smn, rmn = {}, {}
     for k in pairs(sm) do smn[#smn + 1] = k end
     for k in pairs(rm) do rmn[#rmn + 1] = k end
-    return string.format("can_place=%s sig-mask=[%s] ore-mask=[%s]",
-        tostring(can), table.concat(smn, " "), table.concat(rmn, " "))
+    local extra = ""
+    if RAIL_ATTACHED[cas.item] then
+      local rails = surface.find_entities_filtered({
+        area = { { build_pos[1] - 1, build_pos[2] - 1 }, { build_pos[1] + 2, build_pos[2] + 2 } },
+        type = "straight-rail" })
+      local rdesc = {}
+      for _, r in ipairs(rails) do
+        rdesc[#rdesc + 1] = string.format("(%.1f,%.1f/d%d)", r.position.x, r.position.y, r.direction)
+      end
+      extra = " rails=" .. table.concat(rdesc, " ")
+        .. " can_corner_e=" .. tostring(player.can_place_entity({
+            name = cas.item, position = build_pos, direction = defines.direction.east }))
+        .. " can_center_e=" .. tostring(player.can_place_entity({
+            name = cas.item, position = { build_pos[1] + 0.5, build_pos[2] + 0.5 },
+            direction = defines.direction.east }))
+        .. " can_corner_w=" .. tostring(player.can_place_entity({
+            name = cas.item, position = build_pos, direction = defines.direction.west }))
+        .. " can_center_w=" .. tostring(player.can_place_entity({
+            name = cas.item, position = { build_pos[1] + 0.5, build_pos[2] + 0.5 },
+            direction = defines.direction.west }))
+    end
+    return string.format("can_place=%s sig-mask=[%s] ore-mask=[%s]%s",
+        tostring(player.can_place_entity({ name = cas.item, position = build_pos })),
+        table.concat(smn, " "), table.concat(rmn, " "), extra)
   end)
   log("MATRIX-MASK-DIAG " .. cas.id .. ": " .. tostring(diag))
-  if not clean_probe_done and cas.item == "rail-signal" then
-    clean_probe_done = true
-    local cp_ok, cp_err = pcall(probe_clean_signal)
-    if not cp_ok then log("MATRIX-PROBE-CONTROL error: " .. tostring(cp_err)) end
+  local build_dir, build_pt = defines.direction.north, build_pos
+  if RAIL_ATTACHED[cas.item] then
+    -- 2.x rail-lattice directions (probed 2026-10-20): raw values 0-6 select
+    -- the attachment class; dir 2 works for signals on the NS-class pieces,
+    -- dir 4/6 for stops on the EW-class line. The 16-way defines.direction
+    -- names (east=4...) collide with these raw values — do not use them here.
+    for _, combo in ipairs({ { 2, build_pos },
+                             { 2, { build_pos[1] + 0.5, build_pos[2] + 0.5 } },
+                             { 4, build_pos },
+                             { 4, { build_pos[1] + 0.5, build_pos[2] + 0.5 } },
+                             { 6, build_pos },
+                             { 6, { build_pos[1] + 0.5, build_pos[2] + 0.5 } },
+                             { 0, build_pos },
+                             { 0, { build_pos[1] + 0.5, build_pos[2] + 0.5 } } }) do
+      if player.can_place_entity({ name = cas.item, position = combo[2],
+          direction = combo[1] }) then
+        build_pt, build_dir = combo[2], combo[1]
+        log("MATRIX-BUILD-PICK " .. cas.id .. " d" .. combo[1])
+        break
+      end
+    end
   end
   local built_ok = pcall(function()
-    player.build_from_cursor({ position = build_pos, direction = defines.direction.north })
+    player.build_from_cursor({ position = build_pt, direction = build_dir })
   end)
   if not built_ok then
     unbuildable_reason = "build_from_cursor refused (engine unknown-item/other)"
@@ -328,20 +391,52 @@ local function robot_case_setup(cas)
   if not ghost or not ghost.valid then
     return false, "ghost creation failed"
   end
-  -- item_requests is read-write on ghosts in 2.x ("items this ghost will
-  -- request when revived") — this is what makes a script-created ghost
-  -- robot-buildable (item-request-proxy refuses ghost targets: "Target must
-  -- have health"). Robots fetch from the provider chest and build.
-  pcall(function()
-    ghost.item_requests = { { name = cas.item, count = 1 } }
-  end)
-  local req_ok = false
-  pcall(function() req_ok = next(ghost.item_requests or {}) ~= nil end)
-  if not req_ok then
-    return false, "ghost item_requests not accepted"
-  end
+  -- 2.x: script-created entity-ghosts resolve their material WITHOUT any
+  -- item-request-proxy — construction robots fetch from the network chests
+  -- and build them (probed 2026-10-20: rail ghosts built with the explicit
+  -- item_requests write FAILING — the implicit request is what drives it).
   robot_ghost = ghost
   return true
+end
+
+local function item_census(name, site_pos)
+  -- every copy of `name`: main inventory, in-flight drones (with position),
+  -- the robot-phase chests, and ground item-entities (site + infra zones)
+  local function chest_count(ent)
+    local inv = ent.get_inventory and ent.get_inventory(defines.inventory.chest) or nil
+    return inv and inv.get_item_count(name) or 0
+  end
+  local parts = {
+    "main=" .. (player and player.valid and player.get_main_inventory().get_item_count(name) or 0),
+  }
+  for _, r in ipairs(surface.find_entities_filtered({ type = "construction-robot" })) do
+    local inv = r.get_inventory(defines.inventory.robot_cargo)
+    local n = inv and inv.get_item_count(name) or 0
+    if n > 0 then
+      parts[#parts + 1] = string.format("c-drone@(%.1f,%.1f)=%d", r.position.x, r.position.y, n)
+    end
+  end
+  for _, r in ipairs(surface.find_entities_filtered({ type = "logistic-robot" })) do
+    local inv = r.get_inventory(defines.inventory.robot_cargo)
+    local n = inv and inv.get_item_count(name) or 0
+    if n > 0 then
+      parts[#parts + 1] = string.format("l-drone@(%.1f,%.1f)=%d", r.position.x, r.position.y, n)
+    end
+  end
+  for key, ent in pairs(robot_infra) do
+    if ent and ent.valid and chest_count(ent) > 0 then
+      parts[#parts + 1] = key .. "=" .. chest_count(ent)
+    end
+  end
+  for _, zone in ipairs({ site_pos, { -22, 14 } }) do
+    local ents = surface.find_entities_filtered({
+      area = { { zone[1] - 6, zone[2] - 6 }, { zone[1] + 6, zone[2] + 6 } },
+      type = "item-entity", name = name })
+    for _, ie in ipairs(ents) do
+      parts[#parts + 1] = string.format("ground(%.1f,%.1f)=%d", ie.position.x, ie.position.y, ie.stack.count)
+    end
+  end
+  return table.concat(parts, " ")
 end
 
 local function robot_case_assert(cas)
@@ -352,6 +447,9 @@ local function robot_case_assert(cas)
     got = present and "placed" or "absent",
     detail = "robot path (upgrade-driven: real robot built the replacement)",
   })
+  log("MATRIX-CENSUS-NOW " .. cas.id .. " " .. cas.item .. " :: " .. item_census(cas.item, cas.pos))
+  -- where does the guard's recovered item go from here? deferred census
+  pending_censuses[#pending_censuses + 1] = { until_tick = game.tick + 600, item = cas.item, site = cas.pos }
 end
 
 -- ----------------------------------------------------------- case tables
@@ -396,22 +494,20 @@ for _, spec in ipairs(TIERED) do
   end
 end
 
--- rail family at toggle-OFF. Rails have NO cursor item in 2.1 (planner-only
--- placement; GUI wall) — the straight-rail/elevated cases record honest
--- skips; the rail-FAMILY runtime gating is exercised by the signal items.
+-- rail family at toggle-OFF. With the fixture rails laid (ensure_rail_infra
+-- keeps script-created pieces over the ore), the engine accepts signal/stop
+-- placement (their collision masks are empty; they are never stamped) and
+-- the RUNTIME GUARD is what refuses: block + item-return -> guard-blocked.
+-- The ground-rail-stamping dump-diff remains the engine-defense evidence
+-- for the rails themselves. rail-ramp has a real item and places (name
+-- exemption proven); straight-rail/elevated-rail have no cursor item in
+-- 2.1 (the planner item "rail" needs drag semantics build_from_cursor
+-- can't drive) -> pcall'd set_stack records a clean skip.
 local RAIL_A = {
-  -- In a stamped world (toggle off) signals/stops are engine-refused over
-  -- ore (collision layer pair); the runtime guard remains the fallback for
-  -- unstamped configurations. rail-ramp has a real item and places (name
-  -- exemption proven); straight-rail/elevated-rail have no cursor item in
-  -- 2.1 → pcall'd set_stack records a clean skip.
-  -- engine-refused, NOT guard-blocked: signals need a rail piece beneath
-  -- them, and with the toggle off the stamping means rails cannot exist on
-  -- ore at all. The engine refuses before the guard could ever see one.
-  { id = "rail-signal-hc",   area = "alley", pos = { -1, -8 }, item = "rail-signal",       tier = "hardcore", expected = "engine-refused" },
-  { id = "rail-signal-df",   area = "alley", pos = { 0, -8 },  item = "rail-signal",       tier = "default",  expected = "engine-refused" },
-  { id = "rail-chain-df",    area = "alley", pos = { 1, -8 },  item = "rail-chain-signal", tier = "default",  expected = "engine-refused" },
-  { id = "train-stop-df",    area = "alley", pos = { -3, -8 }, item = "train-stop",        tier = "default",  expected = "engine-refused" },
+  { id = "rail-signal-hc",   area = "alley", pos = { -1, -8 }, item = "rail-signal",       tier = "hardcore", expected = "guard-blocked" },
+  { id = "rail-signal-df",   area = "alley", pos = { -1, -8 }, item = "rail-signal",       tier = "default",  expected = "guard-blocked" },
+  { id = "rail-chain-df",    area = "alley", pos = { 1, -8 },  item = "rail-chain-signal", tier = "default",  expected = "guard-blocked" },
+  { id = "train-stop-df",    area = "alley", pos = { -3, -8 }, item = "train-stop",        tier = "default",  expected = "guard-blocked" },
   { id = "rail-support-df",  area = "alley", pos = { 0, -8 },  item = "rail-support",      tier = "default",  expected = "placed" },
   { id = "rail-ramp-df",     area = "alley", pos = { 1, -8 },  item = "rail-ramp",         tier = "default",  expected = "placed" },
   { id = "straight-rail-hc", area = "alley", pos = { -2, -8 }, item = "straight-rail",     tier = "hardcore", expected = "skip" },
@@ -494,82 +590,82 @@ local function skip_remaining_player_cases(reason)
 end
 
 
--- rail pieces along the alley are INFRA (script-created, no events fire):
--- signals can only be placed onto rails, so the matrix ensures 3 pieces.
-RAIL_PIECES = { { -3, -8 }, { -1, -8 }, { 0, -8 }, { 1, -8 } }
-local clean_probe_done = false
-local function ensure_rail_infra()
-    for _, piece in ipairs(RAIL_PIECES) do
-        local found = surface.find_entities_filtered({
-            area = { { piece[1] - 0.5, piece[2] - 1.01 }, { piece[1] + 1.5, piece[2] + 1.01 } },
-            type = "straight-rail" })
-        if #found == 0 then
-            -- the rails snap to the rail lattice; try the two plausible centers
-            for _, py in ipairs({ piece[2] + 0.5, piece[2] - 0.5 }) do
-                local ok, ent = pcall(function()
-                    return surface.create_entity({ name = "straight-rail",
-                        position = { piece[1] + 0.5, py },
-                        direction = defines.direction.north, force = "player" })
-                end)
-                if ok and ent then
-                    local bb = ent.bounding_box
-                    log(string.format("MATRIX-RAIL-INFRA piece(%d,%d) v-pos=%.1f created at %.2f,%.2f bbox=[%.2f,%.2f - %.2f,%.2f]",
-                        piece[1], piece[2], py, ent.position.x, ent.position.y,
-                        bb.left_top.x, bb.left_top.y, bb.right_bottom.x, bb.right_bottom.y))
-                    break
-                elseif not ok then
-                    log("MATRIX-RAIL-INFRA piece(" .. piece[1] .. "," .. piece[2] .. ") variant " .. py .. " threw: " .. tostring(ent))
-                end
+-- the alley track fixtures (railprobe rounds 6–15, 2026-10-20 — the 2.0
+-- rail lattice, empirically decoded):
+--   * 2.0 rails run on an x+y-even half-lattice; create_entity accepts raw
+--     direction values 0-6 (8-way rail convention) and snaps the position.
+--   * dir=2 pieces at even centers (0,-6)/(2,-6): vertical lines whose
+--     taper-end signal spots sit at the case tiles (-1,-8)/(1,-8);
+--     signal builds work with signal-direction 2.
+--   * dir=4 pieces at odd/odd positions on the y=-9 line: an E-W line whose
+--     stop spots cover tiles (x,-8)/(x,-7); the stop build works with
+--     stop-direction 4. (A single create_entity request cannot make an E-W
+--     line on the even-x rows — the probe's L-matrix.)
+RAIL_ATTACHED = { ["rail-signal"] = true, ["rail-chain-signal"] = true, ["train-stop"] = true }
+RAIL_PIECES = {
+  { position = { 0, -6 }, direction = 2 },
+  { position = { 2, -6 }, direction = 2 },
+  { position = { -5, -9 }, direction = 4 },
+  { position = { -3, -9 }, direction = 4 },
+  { position = { -1, -9 }, direction = 4 },
+  { position = { 1, -9 },  direction = 4 },
+  { position = { 3, -9 },  direction = 4 },
+  { position = { 5, -9 },  direction = 4 },
+}
+function ensure_rail_infra()
+    -- idempotent: match by EXACT piece position — find_entities_filtered's
+    -- area filter matches rails by an UNROTATED box (±1.7 reach), so a
+    -- window-overlap check miscounts neighbours as "already present"
+    -- (b-chain fixture regression, caught 2026-10-20 by found-for logging)
+    local built = 0
+    for _, spec in ipairs(RAIL_PIECES) do
+        local have = false
+        for _, r in ipairs(surface.find_entities_filtered({
+            area = { { spec.position[1] - 2.5, spec.position[2] - 2.5 },
+                     { spec.position[1] + 2.5, spec.position[2] + 2.5 } },
+            type = "straight-rail" })) do
+            if math.abs(r.position.x - spec.position[1]) < 0.05
+                and math.abs(r.position.y - spec.position[2]) < 0.05 then
+                have = true
+                break
             end
+        end
+        if have then
+            built = built + 1
         else
-            log(string.format("MATRIX-RAIL-INFRA piece(%d,%d) already present", piece[1], piece[2]))
-        end
-    end
-    local landed = surface.count_entities_filtered({
-        area = { { RAIL_PIECES[1][1] - 2, RAIL_PIECES[3][2] - 2.5 }, { RAIL_PIECES[3][1] + 2, RAIL_PIECES[1][2] + 2.5 } },
-        type = "straight-rail" })
-    local landed_n = tonumber(landed) or 0
-    log("MATRIX-RAIL-INFRA landed=" .. landed_n)
-end
-
--- control variant: does a rail-signal place on a rail over CLEAN ground?
--- Decisive split: if yes, the ore tile is the blocker; if no, it is rail
--- geometry. Probe-only (no build, no events, nothing placed).
-local function probe_clean_signal()
-    for _, x0 in ipairs({ 4, 5, 6, 7, 8, 10, 12 }) do
-        local area = { { x0 - 0.5, -8.5 }, { x0 + 1.5, -7.5 } }
-        local res = surface.count_entities_filtered({ area = area, type = "resource" })
-        if (tonumber(res) or 0) == 0 then
-            local clean = true
-            for _, ent in ipairs(surface.find_entities(area)) do
-                if ent.type ~= "character" then clean = false end
-            end
-            if clean then
-                for _, py in ipairs({ -8 + 0.5, -8 - 0.5 }) do
-                    local ok, ent = pcall(function()
-                        return surface.create_entity({ name = "straight-rail",
-                            position = { x0 + 0.5, py },
-                            direction = defines.direction.north, force = "player" })
-                    end)
-                    if ok and ent then
-                        local can1 = player.can_place_entity({ name = "rail-signal", position = { x0, -8 } })
-                        local can2 = player.can_place_entity({ name = "rail-signal", position = { x0, -9 } })
-                        log(string.format("MATRIX-PROBE-CONTROL clean-rail at %.1f lands; can_place signal tile-a=%s tile-b=%s",
-                            py, tostring(can1), tostring(can2)))
-                        return
-                    end
-                end
-                log("MATRIX-PROBE-CONTROL clean tile " .. x0 .. " but rail refused")
-                return
+            local ok, ent = pcall(function()
+                return surface.create_entity({ name = "straight-rail",
+                    position = spec.position, direction = spec.direction,
+                    force = "player" })
+            end)
+            if ok and ent then
+                built = built + 1
+                log(string.format("MATRIX-RAIL-INFRA relaid (%d,%d) -> at %.2f,%.2f d%d",
+                    spec.position[1], spec.position[2],
+                    ent.position.x, ent.position.y, ent.direction))
+            else
+                log(string.format("MATRIX-RAIL-INFRA refused (%d,%d): %s",
+                    spec.position[1], spec.position[2],
+                    ok and "nil" or tostring(ent)))
             end
         end
     end
-    log("MATRIX-PROBE-CONTROL no clean candidate found")
+    log("MATRIX-RAIL-INFRA pieces=" .. built .. "/" .. #RAIL_PIECES)
 end
 
 function tick_dispatch()
   if not surface then
     surface = game.get_surface(1)
+  end
+  -- deferred item-destination census: 10s after a blocked robot build, count
+  -- every copy of the item: in-flight drones (with their positions), the
+  -- network chests, and the player's main inventory
+  for i = #pending_censuses, 1, -1 do
+    local pending = pending_censuses[i]
+    if game.tick >= pending.until_tick then
+      log("MATRIX-ITEM-CENSUS-10s " .. pending.item .. " :: " .. item_census(pending.item, pending.site))
+      table.remove(pending_censuses, i)
+    end
   end
   if not matrix_started then
     matrix_started = true
@@ -590,8 +686,6 @@ function tick_dispatch()
     player_grace_until = game.tick + 1200
     local infra_ok, infra_err = pcall(ensure_rail_infra)
     if not infra_ok then log("MATRIX-RAIL-INFRA setup error: " .. tostring(infra_err)) end
-    local probe_ok, probe_err = pcall(probe_clean_signal)
-    if not probe_ok then log("MATRIX-PROBE-CONTROL setup error: " .. tostring(probe_err)) end
     stage = "next"
     write_results()
     log(string.format("MATRIX-READY rev=%d cases=%d railtoggle=%s curated=%s oreguard=%s",
@@ -636,6 +730,7 @@ function tick_dispatch()
       robot_case_index = robot_case_index + 1
       local cas = ROBOT_CASES[robot_case_index]
       if not cas then
+        if #pending_censuses > 0 then return end -- census flushes before finishing
         done = true
         write_results()
         return
@@ -652,6 +747,18 @@ function tick_dispatch()
       local ghost_gone = not (robot_ghost and robot_ghost.valid)
       if ghost_gone or game.tick >= robot_wait_until then
         robot_ghost = nil
+        -- do not finish the case yet: the drone that built (and may be
+        -- carrying the recovered item) still sits at the site; wait for it
+        -- to depart (maintainer's hand-procedure, 2026-10-20)
+        robot_wait_until = game.tick + 600
+        stage = "robot-drone-gone"
+      end
+    elseif stage == "robot-drone-gone" then
+      local site = current_case.pos
+      local drones = surface.find_entities_filtered({
+        area = { { site[1] - 8, site[2] - 8 }, { site[1] + 8, site[2] + 8 } },
+        type = "construction-robot" })
+      if #drones == 0 or game.tick >= robot_wait_until then
         robot_case_assert(current_case)
         stage = "next"
       end
@@ -695,6 +802,7 @@ function tick_dispatch()
     robot_case_index = robot_case_index + 1
     local cas = ROBOT_CASES[robot_case_index]
     if not cas then
+      if #pending_censuses > 0 then return end -- census flushes before finishing
       done = true
       write_results()
       return
@@ -713,8 +821,19 @@ function tick_dispatch()
     robot_ticker()
     local ghost_gone = not (robot_ghost and robot_ghost.valid)
     if ghost_gone or game.tick >= robot_wait_until then
-      robot_case_assert(current_case)
       robot_ghost = nil
+      -- wait for the building drone to depart the site before the assert
+      robot_wait_until = game.tick + 600
+      stage = "robot-drone-gone"
+    end
+  elseif stage == "robot-drone-gone" then
+    robot_ticker()
+    local site = current_case.pos
+    local drones = surface.find_entities_filtered({
+      area = { { site[1] - 8, site[2] - 8 }, { site[1] + 8, site[2] + 8 } },
+      type = "construction-robot" })
+    if #drones == 0 or game.tick >= robot_wait_until then
+      robot_case_assert(current_case)
       stage = "robot-next"
     end
   end

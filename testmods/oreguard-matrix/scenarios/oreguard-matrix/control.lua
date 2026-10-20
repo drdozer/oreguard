@@ -28,7 +28,9 @@ local CARVE = { x0 = -150, y0 = -150, x1 = 150, y1 = 150 }
 local FIXTURES = {
   iron   = { item = "iron-ore",   amount = 50000,  x0 = -18, x1 = -14, y0 = 0, y1 = 4 },
   copper = { item = "copper-ore", amount = 50000,  x0 = 10,  x1 = 14,  y0 = 0,  y1 = 4 },
-  alley  = { item = "iron-ore",   amount = 50000,  x0 = -3,  x1 = 3,   y0 = -8, y1 = -8 },
+  -- widened 2026-10-20 (probe rounds 9–15): rail-case signal/stop footprints
+  -- place 1.5-2 rows off the track lines; the strip needs vertical depth.
+  alley  = { item = "iron-ore",   amount = 50000,  x0 = -3,  x1 = 3,   y0 = -10, y1 = -6 },
 }
 -- oil wells: crude-oil is a 3x3 entity — one well per non-overlapping 3x3
 -- block, at the block CENTER; pumpjack cases anchor the same center tiles.
