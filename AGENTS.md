@@ -79,6 +79,10 @@ specs), portal/ (page source), tools/ (check-families.py). No graphics
 - Floors: `--factorio factorio_2_experimental` (2.1.x support evidence;
   both installs share the dlc-provisioned env).
 - Release build: `devctl mods build oreguard --report`.
+- Behavior matrix: `python3 testing/run-matrix.py a b` (scenario-server rig;
+  `testing/PLAN.md` + `testmods/oreguard-matrix/README.md`). Phase 0
+  authored, first run pending approval (headless — no display/GPU). Closes
+  the runtime side of the release gate next to the dump gate.
 - Publish: `devctl mods publish oreguard` (dry-run default; maintainer
   decides `--yes`).
 - **Open: in-game play-test suite** (scenario harness, docs/testing.md §6–7)

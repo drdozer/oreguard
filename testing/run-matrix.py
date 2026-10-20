@@ -1,0 +1,249 @@
+#!/usr/bin/env python3
+"""OreGuard behavior-matrix runner (see testing/PLAN.md).
+
+Sets up a hermetic scratch instance, launches the full client binary as a
+HEADLESS dedicated server on the matrix scenario, waits for
+script-output/oreguard-matrix.json, quits via RCON, and exits non-zero on
+any unpassed case.
+
+  python3 testing/run-matrix.py a     # default instance (rail toggle off)
+  python3 testing/run-matrix.py b     # rail toggle ON (patches mod-settings.dat from instance a's)
+
+Standalone by design: parses devctl.conf only; no devctl verbs, no venv —
+safe to run while other agents hold lib/ in flight.
+"""
+
+import json
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
+import time
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent.parent   # superproject
+MOD = ROOT / "mods" / "oreguard"
+CARRIER = MOD / "testmods" / "oreguard-matrix"
+SCRATCH = MOD / "testing" / "scratch"
+RESULTS = "oreguard-matrix.json"
+RCON_PORT = 27016
+RCON_PASSWORD = "oreguard-matrix"
+TIMEOUT_SECONDS = 600
+
+SERVER_SETTINGS = {
+    "name": "oreguard-matrix",
+    "description": "",
+    "tags": [],
+    "max_players": 0,
+    "visibility": {"public": False, "lan": False},
+    "auto_pause": False,
+    "only_admins_can_pause_the_game": False,
+    "game_password": "",
+    "require_user_verification": False,
+}
+
+MOD_LIST = {
+    "mods": [
+        {"name": "base", "enabled": True},
+        {"name": "oreguard", "enabled": True},
+        {"name": "oreguard-matrix", "enabled": True},
+    ]
+}
+
+
+def game_root() -> pathlib.Path:
+    conf = ROOT / "devctl.conf"
+    if conf.is_file():
+        for line in conf.read_text().splitlines():
+            line = line.strip()
+            if line.startswith("FACTORIO_DLC_PATH="):
+                return pathlib.Path(line.split("=", 1)[1].strip().strip('"'))
+    env = os.environ.get("FACTORIO_DLC_PATH")
+    if env:
+        return pathlib.Path(env)
+    sys.exit("no FACTORIO_DLC_PATH — set it in devctl.conf or the environment")
+
+
+def game_bin(root: pathlib.Path) -> pathlib.Path:
+    for sub in ("bin/x64/factorio", "bin/x64/factorio.exe"):
+        candidate = root / sub
+        if candidate.is_file():
+            return candidate
+    sys.exit(f"factorio binary not found under {root}")
+
+
+def setup_instance(name: str, root: pathlib.Path):
+    inst = SCRATCH / f"instance-{name}"
+    (inst / "config").mkdir(parents=True, exist_ok=True)
+    (inst / "mods").mkdir(parents=True, exist_ok=True)
+
+    cfg = inst / "config" / "config.ini"
+    cfg.write_text(
+        "[path]\n"
+        f"read-data={root / 'data'}\n"
+        f"write-data={inst}\n"
+    )
+    (inst / "server-settings.json").write_text(json.dumps(SERVER_SETTINGS))
+    (inst / "mods" / "mod-list.json").write_text(json.dumps(MOD_LIST))
+
+    for link, target in (("oreguard", MOD / "mod"), ("oreguard-matrix", CARRIER)):
+        dest = inst / "mods" / link
+        if dest.is_symlink() or dest.exists():
+            dest.unlink()
+        dest.symlink_to(target.resolve())
+
+    # startup settings persist in mod-settings.dat (session-2 lesson). The
+    # engine writes the file carrying the mod's DEFAULTS on first run — for
+    # instance B we patch the known boolean after instance a has run. For
+    # BOTH instances a stale file must not survive from a previous round.
+    dat = inst / "mods" / "mod-settings.dat"
+    if name == "a":
+        if dat.exists():
+            dat.unlink()
+    else:
+        src = SCRATCH / "instance-a" / "mods" / "mod-settings.dat"
+        if not src.is_file():
+            sys.exit("instance b needs instance a's written mod-settings.dat — run instance a first")
+        shutil.copyfile(src, dat)
+        flip_rail_toggle(dat)
+    return inst
+
+
+def flip_rail_toggle(dat: pathlib.Path):
+    """Turn oreguard-allow-ground-rail's stored boolean true, in place.
+
+    Layout (verified 2026-10-20 by hexdump): setting names are length-prefixed
+    strings; each carries a 'value' key whose bool serializes as
+    b"\\x01\\x00\\x00\\x00" (false) / b"\\x01\\x00\\x01\\x00" (true). The
+    scenario re-asserts the seeded value at init, so a failed patch fails the
+    run loudly instead of silently testing the wrong branch.
+    """
+    blob = bytearray(dat.read_bytes())
+    needle = b"oreguard-allow-ground-rail"
+    pos = blob.find(needle)
+    if pos < 0:
+        sys.exit("patch failed: setting name not found in mod-settings.dat")
+    vpos = blob.find(b"value", pos)
+    if vpos < 0:
+        sys.exit("patch failed: 'value' key not found after the setting name")
+    payload = vpos + len(b"value") + 2  # [01][00][payload][00]
+    if blob[payload] not in (0, 1):
+        sys.exit(f"patch failed: unexpected bool payload 0x{blob[payload]:02x}")
+    blob[payload] = 1
+    dat.write_bytes(bytes(blob))
+    print(f"patched {dat}: oreguard-allow-ground-rail -> true")
+
+
+# --- RCON client (docs/testing.md §7, dependency-free, verified pattern) ----
+
+def pkt(pid, ptype, body):
+    d = struct.pack("<ii", pid, ptype) + body.encode() + b"\x00\x00"
+    return struct.pack("<i", len(d)) + d
+
+
+def read_pkt(s):
+    ln = struct.unpack("<i", s.recv(4))[0]
+    buf = b""
+    while len(buf) < ln:
+        chunk = s.recv(ln - len(buf))
+        if not chunk:
+            break
+        buf += chunk
+    _rid, rtype = struct.unpack("<ii", buf[:8])
+    return rtype, buf[8:-2].decode(errors="replace")
+
+
+def rcon_quit(port, password):
+    for _ in range(30):
+        try:
+            s = socket.create_connection(("127.0.0.1", port), timeout=5)
+            s.sendall(pkt(1, 3, password))
+            if read_pkt(s)[0] != 2:
+                print("rcon: auth failed (server still warming up?)")
+                s.close(); time.sleep(2); continue
+            s.sendall(pkt(2, 2, "/quit"))
+            read_pkt(s)
+            s.close()
+            return True
+        except OSError:
+            time.sleep(2)
+    return False
+
+
+def run_instance(name: str, root: pathlib.Path, bin_path: pathlib.Path):
+    inst = setup_instance(name, root)
+    out = inst / "script-output" / RESULTS
+    if out.exists():
+        out.unlink()
+    print(f"--- instance {name}: {inst}")
+
+    proc = subprocess.Popen(
+        [str(bin_path), "-c", str(inst / "config" / "config.ini"),
+         "--start-server-load-scenario", "oreguard-matrix/oreguard-matrix",
+         "--server-settings", str(inst / "server-settings.json"),
+         "--rcon-port", str(RCON_PORT), "--rcon-password", RCON_PASSWORD],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    )
+    deadline = time.time() + TIMEOUT_SECONDS
+    try:
+        while time.time() < deadline:
+            if proc.poll() is not None:
+                print(f"server exited early (rc={proc.returncode}) — check "
+                      f"{inst}/logs/")
+                return None
+            if out.is_file():
+                try:
+                    data = json.loads(out.read_text())
+                except json.JSONDecodeError:
+                    time.sleep(1); continue   # partial write — retry
+                if data.get("done"):
+                    rcon_quit(RCON_PORT, RCON_PASSWORD)
+                    return data
+                # partial (phase) write — keep waiting
+            time.sleep(2)
+        print(f"TIMEOUT after {TIMEOUT_SECONDS}s waiting for {out}")
+        return None
+    finally:
+        try:
+            if proc.poll() is None:
+                subprocess.run(["pkill", "-f", str(bin_path)], check=False)
+        except Exception:
+            pass
+
+
+def report(data: dict, expect_rail_on: bool):
+    seed = next((r for r in data.get("records", []) if r["id"] == "seed-rail-toggle"), None)
+    if seed and (seed.get("got") == "on") != expect_rail_on:
+        print(f"seed mismatch: instance expected rail toggle "
+              f"{expect_rail_on and 'on' or 'off'}, got {seed.get('got')!r} — "
+              f"the mod-settings.dat seeding did not take; not a mod bug")
+        return 1
+    failed = data.get("failed", 0)
+    skipped = data.get("skipped", 0)
+    print(f"MATRIX passed={data.get('passed', 0)} failed={failed} skipped={skipped}")
+    for line in data.get("failures", []):
+        print("  FAIL", line)
+    for rec in data.get("records", []):
+        if rec.get("got") == "skip":
+            print("  SKIP", rec["id"], "-", rec.get("detail", ""))
+    return 0 if failed == 0 else 1
+
+
+def main():
+    instances = sys.argv[1:] or ["a"]
+    root = game_root()
+    bin_path = game_bin(root)
+    print(f"factorio: {bin_path}")
+    rc = 0
+    for name in instances:
+        expect = name == "b"
+        data = run_instance(name, root, bin_path)
+        if data is None:
+            rc = 1
+            continue
+        rc = max(rc, report(data, expect))
+    sys.exit(rc or 0)
+
+
+if __name__ == "__main__":
+    main()

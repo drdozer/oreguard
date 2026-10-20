@@ -5,10 +5,6 @@ dist/
 script-output/
 __pycache__/
 *.pyc
-# --- test rig (testing/) scratch: engine rewrites nearly all of it at runtime
-# logs, saves, config.ini (runner regenerates), script-output. The PLAN and
-# the runner whitelist below are the deliberate fixtures.
-testing/scratch/*
-!testing/scratch/configs/
-testing/scratch/configs/*
-!testing/scratch/configs/README.md
+# test-rig scratch (testing/scratch): runner regenerates everything
+# (config.ini, saves, mod-list, logs, results); only PLAN.md + runner tracked
+testing/scratch/

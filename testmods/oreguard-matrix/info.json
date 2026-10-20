@@ -1,0 +1,9 @@
+{
+  "name": "oreguard-matrix",
+  "version": "1.0.0",
+  "title": "OreGuard Matrix (scenario carrier)",
+  "author": "drdozer",
+  "description": "Carries the scenarios/oreguard-matrix behavior-test scenario for OreGuard 0.4.0. Not a gameplay mod; loaded only by mods/oreguard/testing/run-matrix.py inside a scratch instance.",
+  "factorio_version": "2.1",
+  "dependencies": ["base"]
+}

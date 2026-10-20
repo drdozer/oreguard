@@ -39,9 +39,7 @@ destroyed / engine-refused + item-flow bookkeeping).
   (lands in `scratch/<instance>/script-output/`) + a greppable
   `MATRIX-RESULTS passed=N failed=M` log line; teardown via RCON `/quit`
   (exit 0); the bash runner asserts the JSON.
-- **Runner**: `testing/run-matrix.sh <instance>` — python RCON client
-  (dependency-free, testing.md §7) waits for the results file then quits the
-  server; wrapper exits non-zero on any failed case.
+- **Runner**: `testing/run-matrix.py <a|b|a b>` — python, dependency-free:
 
 ## Why the guard paths are automatable, honestly
 

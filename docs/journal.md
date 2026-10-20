@@ -176,6 +176,37 @@ away.
 - Mod repo: locale/families/control/changelog/AGENTS/journal at HEAD.
 - Superproject: pointer bump.
 
+## Session 2026-10-20 (6) — behavior matrix authored (Phase 0; no launches)
+
+The automatable-test plan (testing/PLAN.md) got its implementation:
+
+- `testmods/oreguard-matrix/` — carrier testmod (info.json + README +
+  scenarios/oreguard-matrix/control.lua, ~470 lines). Lab world: kill
+  enemies/strays, flatten ±150 tiles to grass, destroy ALL natural
+  resources, stamp exact fixtures (iron/copper/oil/alley) — legality
+  outside fixtures is by construction.
+- Player path: game.create_player + teleport + cursor_stack.set_stack +
+  build_from_cursor (real events); assert next tick via entity/tile
+  presence + item-flow bookkeeping (case item always starts main-count 0:
+  placed=main 0, guard-blocked=main +1, engine-refused=cursor holds).
+- Robot path: roboport with per-tick LuaEntity.energy top-up (no EEI/no
+  electric network), provider chest, script ghost + item-request-proxy.
+- 84 player cases (tiers x families x toggles, engine canary
+  pumpjack-on-solid-ore, rail split: layered types engine-refused vs
+  signal-types guard-blocked, elevation-allies ON ore, tiles toggle loop,
+  control-zone negatives) + 5 instance-B rail cases + 4 robot cases.
+- Instance B = seeded mod-settings.dat (run-matrix.py patches the stored
+  bool from instance a's engine-written file; the scenario's seed-rail-toggle
+  record + runner cross-check catch bad patches loudly).
+- Runner `testing/run-matrix.py a b` — standalone (devctl.conf only; no
+  lib/ deps, safe while the tooling agent holds lib/ in flight); headless
+  server, RCON quit, JSON asserts, non-zero exit on failures.
+- Self-review caught 3 pre-run bugs (two cases off the ore strip -> vacuous/
+  failing; tile "built" detection absent) — fixed pre-commit. Remaining
+  mechanism items (signature shapes, cursor_stack.set_stack, settings.global
+  write, item-request-proxy params) triage on first dry-run: harness bugs
+  first, mod bugs second. NOT LAUNCHED (GPU in use; instruction stands).
+
 ## Session 2026-10-20 — full devctl-style refactor (process conformance)
 
 Starting point: 0.3.3 post-port layout (`mod/` portal-clean, docs-only extras).
