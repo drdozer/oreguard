@@ -578,3 +578,53 @@ client, user-visible observations included) decoded the 2.x lattice:
    fix) in one commit; publish dry-run then maintainer `--yes`.
 4. Manual probes the matrix cannot see: floating-text composition per tier,
    blueprint-ghost refusal at placement, post-update ghost sweep.
+
+### Follow-on session, 2026-10-20 (late): 0.4.0 shipped — deferred plan executed
+
+Plan executed in full, with two maintainer-approved amendments:
+
+- **Ship target stayed 0.4.0 (not 0.4.1).** Rationale: the portal never had
+  any 0.4.x (0.1.0-0.3.1 only, all fv=2.0; verified live via
+  `devctl mods fetch --list`), so the spill-signature fix folded into 0.4.0
+  with no version bump. changelog.txt gained a Bug Fixes section (crash
+  signature; "0.4.0 was never portal-published" note) and the robot-recovery
+  Features bullet was corrected ("returned to the placing robot's cargo" ->
+  dropped at the build site, robot re-collects into network storage - the
+  delivery path the matrix verified). Commit dceafe6.
+- **Lab item closed on the copy path:** the 21:46 curated save (written with
+  the scenario-default name by the prep session) adopted as canonical
+  lab.zip; `a --lab` 71/0/2 and `b --lab` 5/0 in that world (407a51d).
+
+Release gate, all green: check-families (10 families / 4 tiers);
+`devctl mods check oreguard --env dlc/oreguard --suite smoke,diff,locale`
+(diff 0/0/0 vs the cached baseline - the control-side fix produces no
+prototype drift; locale: 0 dead refs of ours); `devctl mods build --report`
+strict ok (+families.lua, +thumbnail.png, 6 changed files = 0.4.0 content
+evolution + today's fix). Changelog commit precedes the build, so the zip
+carries it.
+
+**Skew investigation (maintainer-reported during the text probe):** pipes
+over ore refused in a session the UI described as "Default". Read-only
+verdict via a headless RCON probe on the exact save: the save carried
+runtime-global `oreguard-tier = "hardcore"` from its authoring session. The
+guard reads settings live (no cache) - it was correct; the UI value read was
+the install-level default, not the save-carried runtime value. The matrix
+never trips on save-carried values because the carrier sets the tier per
+case. Fix-up: headless `set_tier default` + 6 rail fixtures cleared from
+alley E + `/save floating-check2` -> relaunch; maintainer confirmed full
+Default behaviour live, across the tier ladder.
+
+- Canonical lab.zip refreshed from floating-check2 (default tier, cleared
+  fixtures) so future human loads inherit neutral values.
+- **Maintainer probes:** floating text per tier verified in the fixed world.
+  Blueprint-ghost click probe and the 0.3.1 migration sweep were not
+  performed (script-created ghost/proxy robot coverage stands in the
+  matrix; migration code-reviewed) - optional, revisit only if needed.
+- **Shipped:** `devctl mods publish oreguard --yes` - 0.4.0 live on the
+  portal, portal sha1 verified (8cdead306d4971ee0be6ae8f403fa6bdc5137e3d),
+  page polish pushed. First fv=2.1 release; players move 0.3.1 -> 0.4.0.
+
+**Tooling lessons of the session:** on playerless headless servers
+`/c` silently no-ops - use `/silent-command`; `helpers.write_file` writes
+into `script-output/`; `pkill -f <pattern>` self-kills the invoking shell
+when the pattern appears in one's own command line - use `pkill -x`.
