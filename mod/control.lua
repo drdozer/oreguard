@@ -251,6 +251,11 @@ local tile_guard_invocations = 0
 local tile_guard_outcome_log = true
 
 local function enforce_tile_guard(surface, tiles, item_name, carrier, is_robot)
+    -- 2.x tile events carry item/proxy objects, not names (observed:
+    -- "[LuaItemPrototype: stone-brick (item)]"); duck-type to the name.
+    if type(item_name) ~= "string" and item_name and item_name.name then
+        item_name = item_name.name
+    end
     tile_guard_invocations = tile_guard_invocations + 1
     local n = tile_guard_invocations
     for _, tile in ipairs(tiles) do
