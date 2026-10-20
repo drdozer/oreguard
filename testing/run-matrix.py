@@ -6,8 +6,9 @@ HEADLESS dedicated server on the matrix scenario, waits for
 script-output/oreguard-matrix.json, quits via RCON, and exits non-zero on
 any unpassed case.
 
-  python3 testing/run-matrix.py a     # default instance (rail toggle off)
-  python3 testing/run-matrix.py b     # rail toggle ON (patches mod-settings.dat from instance a's)
+  python3 testing/run-matrix.py a            # full matrix, windowed (game.player exists)
+  python3 testing/run-matrix.py b a-style    # rail toggle ON subset
+  python3 testing/run-matrix.py a --headless # robot-only; player cases auto-skip
 
 Standalone by design: parses devctl.conf only; no devctl verbs, no venv —
 safe to run while other agents hold lib/ in flight.
@@ -21,7 +22,7 @@ import subprocess
 import sys
 import time
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent.parent   # superproject
+ROOT = pathlib.Path(__file__).resolve().parents[3]   # superproject (testing -> oreguard -> mods -> root)
 MOD = ROOT / "mods" / "oreguard"
 CARRIER = MOD / "testmods" / "oreguard-matrix"
 SCRATCH = MOD / "testing" / "scratch"
@@ -170,20 +171,33 @@ def rcon_quit(port, password):
     return False
 
 
-def run_instance(name: str, root: pathlib.Path, bin_path: pathlib.Path):
+def run_instance(name, root, bin_path, windowed=True, lab=None, leave_open=False):
     inst = setup_instance(name, root)
     out = inst / "script-output" / RESULTS
     if out.exists():
         out.unlink()
     print(f"--- instance {name}: {inst}")
 
-    proc = subprocess.Popen(
-        [str(bin_path), "-c", str(inst / "config" / "config.ini"),
-         "--start-server-load-scenario", "oreguard-matrix/oreguard-matrix",
-         "--server-settings", str(inst / "server-settings.json"),
-         "--rcon-port", str(RCON_PORT), "--rcon-password", RCON_PASSWORD],
-        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-    )
+    if lab:
+        save = inst / "saves" / f"{lab}.zip"
+        if not save.is_file():
+            sys.exit(f"curated save not found: {save} — run prep + editor first (LAB-WORLD.md)")
+        print(f"mode: windowed, curated save {save.name}")
+        cmd = [str(bin_path), "-c", str(inst / "config" / "config.ini"), str(save)]
+    else:
+        cmd = [str(bin_path), "-c", str(inst / "config" / "config.ini"),
+               "--load-scenario", "oreguard-matrix/oreguard-matrix"]
+    if windowed:
+        # windowed singleplayer: the local player EXISTS, so the real player
+        # path (on_built_entity / tiles / cursor builds) is exercisable. The
+        # runner polls script-output and terminates the process when done.
+        print("mode: windowed singleplayer (a game window will open briefly)")
+        cmd += ["--rcon-port", str(RCON_PORT), "--rcon-password", RCON_PASSWORD]
+    else:
+        cmd += ["--start-server-load-scenario", "oreguard-matrix/oreguard-matrix",
+                "--server-settings", str(inst / "server-settings.json")]
+
+    proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     deadline = time.time() + TIMEOUT_SECONDS
     try:
         while time.time() < deadline:
@@ -197,7 +211,15 @@ def run_instance(name: str, root: pathlib.Path, bin_path: pathlib.Path):
                 except json.JSONDecodeError:
                     time.sleep(1); continue   # partial write — retry
                 if data.get("done"):
-                    rcon_quit(RCON_PORT, RCON_PASSWORD)
+                    if windowed:
+                        # local session: no server to /quit — stop the process
+                        try:
+                            proc.terminate()
+                            proc.wait(timeout=10)
+                        except Exception:
+                            proc.kill()
+                    else:
+                        rcon_quit(RCON_PORT, RCON_PASSWORD)
                     return data
                 # partial (phase) write — keep waiting
             time.sleep(2)
@@ -230,14 +252,29 @@ def report(data: dict, expect_rail_on: bool):
 
 
 def main():
-    instances = sys.argv[1:] or ["a"]
-    root = game_root()
-    bin_path = game_bin(root)
+    argv = sys.argv[1:]
+    if "prep" in argv:
+        # windowed session for the map-editor pass; runner returns at once
+        root = game_root(); bin_path = game_bin(root)
+        inst = setup_instance("a", root)
+        subprocess.Popen([str(bin_path), "-c", str(inst / "config" / "config.ini"),
+                          "--load-scenario", "oreguard-matrix/oreguard-matrix"],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print("instance session launched for editing. Adjust to LAB-WORLD.md, "
+              "save as 'lab', quit. Then: python3 run-matrix.py a --lab")
+        return
+    windowed = "--headless" not in argv
+    lab = None
+    if "--lab" in argv:
+        argv = [a for a in argv if a != "--lab"]
+        lab = "lab"
+    args = argv or ["a"]
+    root = game_root(); bin_path = game_bin(root)
     print(f"factorio: {bin_path}")
     rc = 0
-    for name in instances:
+    for name in args:
         expect = name == "b"
-        data = run_instance(name, root, bin_path)
+        data = run_instance(name, root, bin_path, windowed=windowed, lab=lab)
         if data is None:
             rc = 1
             continue

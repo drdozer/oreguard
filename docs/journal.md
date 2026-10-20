@@ -207,6 +207,51 @@ The automatable-test plan (testing/PLAN.md) got its implementation:
   write, item-request-proxy params) triage on first dry-run: harness bugs
   first, mod bugs second. NOT LAUNCHED (GPU in use; instruction stands).
 
+## Session 2026-10-20 (7) — matrix first live runs: crashes, fixes, lab-world pivot
+
+First live sessions of the behavior matrix (windowed). What the runs taught:
+
+- `script.on_tick` doesn't exist (event = defines.events.on_tick); headless
+  servers CANNOT create players (`game.create_player` absent in 2.x — the
+  testing-doc note was wrong). Pivot: windowed singleplayer (--load-scenario,
+  positional-save mode added) where game.player exists; headless stays as a
+  robot-only fallback (player cases auto-skip after a grace window).
+- 2.0 item renames hit the case table: electric-pole -> small-electric-pole,
+  logistic-chest-storage -> storage-chest, and RAILS have no cursor item at
+  all (straight-rail/elevated-*/rail-ramp carry no items_to_place_this;
+  planners are their own prototype category) — rails are planner-dragged,
+  a GUI-wall path, so those cases record honest skips; the rail-family
+  runtime gating rides the real signal items, and the ground-rail MASK
+  behavior stays dump-proven.
+- crude-oil is a 3x3 entity: per-tile stamping was invalid — wells are now
+  single entities at centers of non-overlapping 3x3 blocks.
+- The logistic chest entity is passive-provider-chest (not
+  logistic-chest-passive-provider) — first in-scenario crash, caught because
+  an unwrapped create_entity error reached the engine on tick 0.
+- CRASH CONTAINMENT (strategy for scripting crashes): tick_dispatch is
+  pcalled by the on_tick handler — an error records a harness failure and
+  the matrix continues; the runner also SIGTERMs the game at timeout, so no
+  human ever has to clear the windowed error dialog again.
+- game.player was nil at on_init even windowed — player acquisition is lazy
+  (grace window + per-tick retry; headless: skips recorded once).
+- roboport energy-write alone was insufficient (user observed no power):
+  power island added — electric-energy-interface + substation wired to the
+  roboport (per-tick energy top-ups on both).
+
+### Lab-world pivot (user offer, accepted)
+
+A curated map-editor save replaces trust in script curation (a leftover
+natural iron patch survived the purge; oil/power fixes are easier by hand).
+New flow: `run-matrix.py prep` opens the instance session; the human adjusts
+to `testing/LAB-WORLD.md` spec (fixtures incl. oil-well 3x3 rule at exact
+coordinates, power island), saves as 'lab', quits; `run-matrix.py a --lab`
+loads the curated save positionally. on_init still curates for fresh runs;
+on_load adopts curated saves (storage.oreguard_lab_curated).
+
+End state: control.lua rebuilt coherently (balance-checked; containment;
+load-aware), runner gains prep/--lab modes, LAB-WORLD.md authored. Awaiting
+the user's editing pass, then the matrix runs.
+
 ## Session 2026-10-20 — full devctl-style refactor (process conformance)
 
 Starting point: 0.3.3 post-port layout (`mod/` portal-clean, docs-only extras).
