@@ -36,11 +36,9 @@ There is a startup setting to prevent regular rails from being built on ore patc
 
 ## Compatibility
 
-- Designed for Factorio 2.0 and above.
-- Supports elevated rails spanning over ore patches.
-- Optional integration with elevated rails'
-- Supports the cargo ships mods. Not sure if this will work with all mods that provide custom rails.
-- Should be compatible with most other mods, but may conflict with mods that alter tile or entity placement logic.
+- Designed for Factorio 2.1 (declared `factorio_version "2.1"`, dependency floor `base >= 2.1.0`).
+- Elevated rails can span over ore patches (optional integration; works with the elevated rails DLC).
+- Should be compatible with most other mods, but may conflict with mods that alter tile or entity placement logic or that provide custom rails.
 
 ## Related Mods
 
