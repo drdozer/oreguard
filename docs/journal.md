@@ -432,3 +432,55 @@ deps `base >= 2.1.0`, `? elevated-rails`, `? cargo-ships`.
   task `port-oreguard.md` removed after push.
 - Next: `inbox/port-spiderbots-quickstart.md` (Order 3; fv 2.0 → expect
   2.1 load rejection → issue file, no declaration bumps).
+
+## 2026-10-20 — Matrix harness session (oreguard 0.4.0)
+
+### Outcome
+
+- **Instance A (no rail toggle): GREEN — passed=67 failed=0 skipped=6.**
+  Skips carry machine-read reasons: 2 × planner-rails (no cursor item in 2.x),
+  4 × robot ghosts (item-request-proxy refuses health-less ghosts in 2.x).
+- **Instance B (rail toggle on): passed=2 failed=3.** Seed-toggle + pole
+  pass. The 3 refusals are rail-signal/chain/stop **engine** `can_place=false`
+  with rails present — pending maintainer answer: does vanilla allow
+  signal-on-rail-over-ore at all? If no → cases become engine-refused/
+  guard-blocked and instance B is done.
+
+### Fixes this session (committed, in commit order)
+
+- `mod/control.lua`: duck-type the guard's `item_name` at entry — 2.x tile
+  events carry `LuaItemPrototype` **userdata**, not strings
+  (`returned=-1` bug: guard denied + restored but silently skipped the
+  item-return). Grep-verified placement; instance A green afterward.
+- `testmods/oreguard-matrix/control.lua` (driver, rev 22):
+  - planner-rails: prototype existence check before any inventory read
+    (get_item_count raises "Unknown item name" → clean skips instead of
+    crash records);
+  - rail-infra: script-created straight rails under the alley signal/stop
+    tiles (verified bboxes; signals need rails beneath to even attempt
+    placement);
+  - probe_clean_signal: clean-ground control for the signal-refusal split
+    (runs at case time; awaiting maintainer answer);
+  - pole-at-hardcore expectation corrected (mod behavior was correct).
+- `testing/run-matrix.py`: canonical fixture save at
+  `testing/scratch/saves/lab.zip` (tracked, whitelisted); instance saves
+  migrate into the canonical location on use; sync-back after lab runs.
+  **Verified: fixture bytes identical to the curated commit.**
+
+### Diagnostics discipline (learned the hard way)
+
+- Mask reads at runtime: `prototype.collision_mask.layers` — works for
+  resources (`[oreguard resource]`); rail-signal reads genuinely EMPTY
+  layers; the empty signal mask is a real read, not a wrong shape (same
+  code path as the ore read).
+- Several edits earlier in the session silently no-op'd (anchor drift);
+  house style is now read-region → assert-anchor → grep-verify after write.
+- pkill hygiene: `pkill -f run-matrix` kills my own launch chain (the
+  nohup cmdline contains the literal string) — kill and launch in separate
+  calls; use `pkill -x factorio` only.
+
+### Open
+
+- Rail-signal placement rules (signal-on-rail-over-ore, script-side rail
+  lattice + signal direction) — WAITING ON MAINTAINER, per directive:
+  ask, don't loop on guesses.
