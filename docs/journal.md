@@ -252,6 +252,50 @@ End state: control.lua rebuilt coherently (balance-checked; containment;
 load-aware), runner gains prep/--lab modes, LAB-WORLD.md authored. Awaiting
 the user's editing pass, then the matrix runs.
 
+## Session 2026-10-20 (8) — matrix live: the save-embedding lesson
+
+The behavior matrix ran live in several shapes; the session's big discovery:
+
+**Level scripts are SNAPSHOT INTO SAVE FILES.** `__level__/control.lua` is
+serialized at save time (lab.zip carries `lab/control.lua`, 24.8 KB); loading
+the save runs that frozen copy — disk-side scenario fixes NEVER reach it
+(confirmed twice: identical crash line numbers after the fix). Consequence
+(structural): the matrix DRIVER moved to the carrier MOD's control.lua —
+mod scripts reload from disk every session — and the level script becomes
+curation-only with an inert on_load. lab.zip's embedded script was surgically
+stubbed (zip member replacement; level.dat untouched) so the maintainer's
+hand-curated editing pass stayed valid.
+
+Engine API facts established by traceback (xpcall error handler — traceback
+captured at the RAISE SITE):
+
+- item-request-proxy rejects health-less targets: ghost targets are
+  impossible ("Target must have health"); ghost.health is nil and
+  defines.inventory.item_requested doesn't exist — ghosts cannot be made
+  robot-buildable headless via either route. ghost.item_requests is
+  read-only in 2.x (R/W is the 1.1 signature). Robot-path headless
+  automation parked: candidates are the 2.x blueprint-record API
+  (LuaRecord::build_blueprint) or a human probe. Robot case failures record
+  as skips with the reason (containment design).
+- settings policy: runtime-global settings can only be written by the owning
+  mod — oreguard now exposes remote interface "oreguard"
+  (set_tier/set_tiles_toggle/get_state) and the matrix drives tiers through
+  it.
+- windowed sessions: game.player is NOT available at on_init (lazy
+  acquisition + grace window); a positional save load requires ONE human
+  menu click; the login/update modals were eliminated by deriving the
+  instance config from the signed-in client config (path lines patched).
+
+Harness bugs fixed along the way: unbounded filter forms, missing returns
+(player-less cases ran during the grace window), runner arg-flag filtering,
+import losses, splice orphans (regex-balance false alarms — the engine is
+the parser). Crash containment (xpcall + dedupe) turned every one of these
+from a GUI-crash iteration into a one-line results record.
+
+State: headless runs reach done=True (seed + 68 player-case skips + robot
+skips). The player-path matrix (84 cases) is live-pending ONE menu click on
+the lab save via `run-matrix.py a --lab`.
+
 ## Session 2026-10-20 — full devctl-style refactor (process conformance)
 
 Starting point: 0.3.3 post-port layout (`mod/` portal-clean, docs-only extras).
