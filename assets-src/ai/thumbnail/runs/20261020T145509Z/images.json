@@ -1,0 +1,74 @@
+[
+  {
+    "file": "01-wide-video-game-scene-painted-in-the-gri-40ec6d5f-512x512-seed7-rep1.png",
+    "prompt_index": 1,
+    "prompt_sha1_8": "40ec6d5f",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 66.04,
+    "torch_peak_mib": 9802
+  },
+  {
+    "file": "02-the-video-game-art-style-of-the-game-fac-a808412a-512x512-seed7-rep1.png",
+    "prompt_index": 2,
+    "prompt_sha1_8": "a808412a",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 62.96,
+    "torch_peak_mib": 9802
+  },
+  {
+    "file": "03-map-style-scene-seen-from-above-at-a-sli-b7c2a0ee-512x512-seed7-rep1.png",
+    "prompt_index": 3,
+    "prompt_sha1_8": "b7c2a0ee",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 62.06,
+    "torch_peak_mib": 9802
+  },
+  {
+    "file": "04-scene-painted-in-the-gritty-semi-realist-cedcd32d-512x512-seed7-rep1.png",
+    "prompt_index": 4,
+    "prompt_sha1_8": "cedcd32d",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 62.42,
+    "torch_peak_mib": 9802
+  },
+  {
+    "file": "05-scene-painted-in-the-gritty-semi-realist-533dbb46-512x512-seed7-rep1.png",
+    "prompt_index": 5,
+    "prompt_sha1_8": "533dbb46",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 61.4,
+    "torch_peak_mib": 9802
+  },
+  {
+    "file": "06-wide-video-game-scene-painted-in-the-gri-52a058c6-512x512-seed7-rep1.png",
+    "prompt_index": 6,
+    "prompt_sha1_8": "52a058c6",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 61.18,
+    "torch_peak_mib": 9807
+  },
+  {
+    "file": "07-scene-painted-in-the-gritty-semi-realist-a3b1d64e-512x512-seed7-rep1.png",
+    "prompt_index": 7,
+    "prompt_sha1_8": "a3b1d64e",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 60.82,
+    "torch_peak_mib": 9807
+  },
+  {
+    "file": "08-scene-painted-in-the-gritty-semi-realist-f39bf0ee-512x512-seed7-rep1.png",
+    "prompt_index": 8,
+    "prompt_sha1_8": "f39bf0ee",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 61.28,
+    "torch_peak_mib": 9807
+  }
+]

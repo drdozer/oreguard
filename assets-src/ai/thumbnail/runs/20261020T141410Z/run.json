@@ -1,0 +1,240 @@
+{
+  "schema": "art-run/1",
+  "stamp": "20261020T141410Z",
+  "project": "oreguard",
+  "brief": "thumbnail",
+  "engine": {
+    "script": "/home/nmrp3/devel/factorio-mods/scripts/qwen-generate.py",
+    "sha256": "4b130baf0420faaa6c0eb67e805f8c69d42a55f21250f85ec0c7a0a1e962231d",
+    "meta": {
+      "model": "addlabsviral/Qwen-Image-2.1-Turbo-diffuser-8bit",
+      "dtype": "bfloat16",
+      "offload": "model",
+      "width": 512,
+      "height": 512,
+      "steps": 8,
+      "true_cfg": null,
+      "generator_device": "cpu",
+      "vae_tiling": true,
+      "vae_slicing": false,
+      "kv_cache": true,
+      "device": "cuda",
+      "seed": 7,
+      "prompts": [
+        "Cartoon scene from a low three-quarter angle on a green meadow: a confident, cheerful cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest kneels happily at the edge of a large patch of vivid cobalt-blue ore crystals sparkling in the ochre-brown ground, placing a chunky yellow-and-black mining drill onto the crystals. A brown conveyor belt loaded with blue ore chunks sweeps in a smooth arc around the edge of the patch, hugging its rounded curve and carrying the ore away toward the middle distance. Lush green trees fill the left edge; grey boulders dot the grass; a hazy factory skyline recedes behind. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+        "Cartoon map scene seen from above at a slight angle: a lush green meadow crossed by brown conveyor belts that curve in smooth sweeping arcs around two large rounded patches of sparkling cobalt-blue ore crystals embedded in the ochre-brown ground, the belts hugging the crystal patches' rounded edges and carrying blue ore chunks away. A chunky yellow-and-black mining drill stands on one patch; grey boulders and small bushes dot the grass; a hazy factory skyline sits at the far edge. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+        "Cartoon scene with the camera low and close to the ground: a chunky yellow-and-black mining drill bites into a large patch of vivid cobalt-blue ore crystals, blue ore chunks bouncing onto a brown conveyor belt that sweeps in a smooth arc around the patch edge and away. A confident, cheerful cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest strides alongside the belt pointing ahead with a warm smile, tall dark rubber boots on the ochre-brown dirt. Lush green trees frame one corner; grey boulders and grass tufts fill the foreground; bright sky above. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+        "Cartoon scene from behind and slightly above: a capable, calm cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest stands with hands on hips, proudly watching a yellow-and-black mining drill work a large patch of sparkling cobalt-blue ore crystals in the ochre-brown ground. A brown conveyor belt loaded with blue ore chunks sweeps across the foreground in a smooth arc around the edge of the patch. Lush green trees frame both sides; grey boulders dot the meadow; a hazy factory skyline recedes into the distance. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+        "Cartoon scene seen from high above at a slight angle: a wide green meadow with three rounded patches of sparkling cobalt-blue ore crystals of different shapes embedded in the ochre-brown ground, brown conveyor belts threading in smooth curves between the patches, arcing around their edges and carrying blue ore chunks toward a small cluster of factory buildings in the distance. A yellow-and-black mining drill stands on the largest patch. Grey boulders, grass tufts and a few green trees scatter the meadow; bright open sky beyond. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+        "Cartoon scene in a green meadow: a cheerful cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest waves goodbye with a warm smile as a small round construction robot flies away high in the air carrying a grey storage chest in its claws. Below, a yellow-and-black mining drill works a large patch of sparkling cobalt-blue ore crystals in the ochre-brown ground, and a brown conveyor belt loaded with blue ore chunks sweeps in a smooth arc around the patch edge. Lush green trees fill one corner; grey boulders dot the grass; bright sky above. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+        "Cartoon scene from a low three-quarter angle on a green meadow: a confident, cheerful cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest kneels beside a chunky yellow-and-black mining drill placed on a large patch of glossy dark coal chunks with a cool teal sheen, embedded in the ochre-brown ground. A brown conveyor belt loaded with black coal chunks sweeps in a smooth arc around the edge of the patch, hugging its rounded curve. Lush green trees fill the left edge; grey boulders dot the grass; a hazy factory skyline recedes behind. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+        "Cartoon scene seen from the side at a slight angle, camera low over the ground: a cheerful cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest crosses a green meadow carrying a red toolbox in one hand, mid-stride, calm happy expression, following a brown conveyor belt loaded with blue ore chunks that sweeps in a smooth diagonal arc around a large patch of sparkling cobalt-blue ore crystals, the belt hugging the patch's rounded edge from the lower-left foreground into the middle distance. A yellow-and-black mining drill stands on the crystals. Grey boulders and grass tufts dot the ground; lush green trees frame one side; a hazy factory skyline recedes behind. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface."
+      ],
+      "model_revision": "5fd7a79fdfc88d5b2b4acd1f356bf6c1fa447f1c",
+      "environment": {
+        "python": "3.13.5",
+        "torch": "2.14.0+cu126",
+        "torch_cuda": "12.6",
+        "gpu": "NVIDIA GeForce GTX TITAN X",
+        "driver": "550.163.01",
+        "diffusers": "0.41.0.dev0"
+      }
+    }
+  },
+  "generation": {
+    "width": 512,
+    "height": 512,
+    "seed": 7,
+    "seed_mode": "shared",
+    "count": 8,
+    "reps": 1,
+    "model": "addlabsviral/Qwen-Image-2.1-Turbo-diffuser-8bit",
+    "model_revision": "5fd7a79fdfc88d5b2b4acd1f356bf6c1fa447f1c",
+    "steps": 8,
+    "offload": "model",
+    "dtype": "bfloat16",
+    "true_cfg": null,
+    "generator_device": "cpu"
+  },
+  "prompts": [
+    {
+      "index": 1,
+      "text": "Cartoon scene from a low three-quarter angle on a green meadow: a confident, cheerful cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest kneels happily at the edge of a large patch of vivid cobalt-blue ore crystals sparkling in the ochre-brown ground, placing a chunky yellow-and-black mining drill onto the crystals. A brown conveyor belt loaded with blue ore chunks sweeps in a smooth arc around the edge of the patch, hugging its rounded curve and carrying the ore away toward the middle distance. Lush green trees fill the left edge; grey boulders dot the grass; a hazy factory skyline recedes behind. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+      "sha1_8": "7047410d"
+    },
+    {
+      "index": 2,
+      "text": "Cartoon map scene seen from above at a slight angle: a lush green meadow crossed by brown conveyor belts that curve in smooth sweeping arcs around two large rounded patches of sparkling cobalt-blue ore crystals embedded in the ochre-brown ground, the belts hugging the crystal patches' rounded edges and carrying blue ore chunks away. A chunky yellow-and-black mining drill stands on one patch; grey boulders and small bushes dot the grass; a hazy factory skyline sits at the far edge. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+      "sha1_8": "1547ca41"
+    },
+    {
+      "index": 3,
+      "text": "Cartoon scene with the camera low and close to the ground: a chunky yellow-and-black mining drill bites into a large patch of vivid cobalt-blue ore crystals, blue ore chunks bouncing onto a brown conveyor belt that sweeps in a smooth arc around the patch edge and away. A confident, cheerful cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest strides alongside the belt pointing ahead with a warm smile, tall dark rubber boots on the ochre-brown dirt. Lush green trees frame one corner; grey boulders and grass tufts fill the foreground; bright sky above. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+      "sha1_8": "f4cd97d5"
+    },
+    {
+      "index": 4,
+      "text": "Cartoon scene from behind and slightly above: a capable, calm cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest stands with hands on hips, proudly watching a yellow-and-black mining drill work a large patch of sparkling cobalt-blue ore crystals in the ochre-brown ground. A brown conveyor belt loaded with blue ore chunks sweeps across the foreground in a smooth arc around the edge of the patch. Lush green trees frame both sides; grey boulders dot the meadow; a hazy factory skyline recedes into the distance. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+      "sha1_8": "42090b17"
+    },
+    {
+      "index": 5,
+      "text": "Cartoon scene seen from high above at a slight angle: a wide green meadow with three rounded patches of sparkling cobalt-blue ore crystals of different shapes embedded in the ochre-brown ground, brown conveyor belts threading in smooth curves between the patches, arcing around their edges and carrying blue ore chunks toward a small cluster of factory buildings in the distance. A yellow-and-black mining drill stands on the largest patch. Grey boulders, grass tufts and a few green trees scatter the meadow; bright open sky beyond. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+      "sha1_8": "5a681f61"
+    },
+    {
+      "index": 6,
+      "text": "Cartoon scene in a green meadow: a cheerful cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest waves goodbye with a warm smile as a small round construction robot flies away high in the air carrying a grey storage chest in its claws. Below, a yellow-and-black mining drill works a large patch of sparkling cobalt-blue ore crystals in the ochre-brown ground, and a brown conveyor belt loaded with blue ore chunks sweeps in a smooth arc around the patch edge. Lush green trees fill one corner; grey boulders dot the grass; bright sky above. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+      "sha1_8": "23dcbc75"
+    },
+    {
+      "index": 7,
+      "text": "Cartoon scene from a low three-quarter angle on a green meadow: a confident, cheerful cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest kneels beside a chunky yellow-and-black mining drill placed on a large patch of glossy dark coal chunks with a cool teal sheen, embedded in the ochre-brown ground. A brown conveyor belt loaded with black coal chunks sweeps in a smooth arc around the edge of the patch, hugging its rounded curve. Lush green trees fill the left edge; grey boulders dot the grass; a hazy factory skyline recedes behind. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+      "sha1_8": "5b709eb0"
+    },
+    {
+      "index": 8,
+      "text": "Cartoon scene seen from the side at a slight angle, camera low over the ground: a cheerful cartoon engineer in a yellow hard hat with a headlamp, round goggles, orange shirt and grey armored vest crosses a green meadow carrying a red toolbox in one hand, mid-stride, calm happy expression, following a brown conveyor belt loaded with blue ore chunks that sweeps in a smooth diagonal arc around a large patch of sparkling cobalt-blue ore crystals, the belt hugging the patch's rounded edge from the lower-left foreground into the middle distance. A yellow-and-black mining drill stands on the crystals. Grey boulders and grass tufts dot the ground; lush green trees frame one side; a hazy factory skyline recedes behind. Bold, clean cartoon video-game thumbnail illustration, thick outlines, flat vivid colors, strong contrast, simple readable shapes that stay clear at very small sizes. No text, no letters, no words, no logos, no user interface.",
+      "sha1_8": "52554170"
+    }
+  ],
+  "overrides": {},
+  "environment": {
+    "python": "3.13.5",
+    "torch": "2.14.0+cu126",
+    "torch_cuda": "12.6",
+    "gpu": "NVIDIA GeForce GTX TITAN X",
+    "driver": "550.163.01",
+    "diffusers": "0.41.0.dev0"
+  },
+  "images": [
+    {
+      "variant": 1,
+      "file": "candidates/variant-1-512.png",
+      "engine_file": "01-cartoon-scene-from-a-low-three-quarter-a-7047410d-512x512-seed7-rep1.png",
+      "prompt_index": 1,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 61.5,
+      "torch_peak_mib": 9784,
+      "sha256": "20dd38ab7d108b28a7a8600828530528c21a8c1c8fe18b5fdc6d9276695d2f97",
+      "bytes": 479941
+    },
+    {
+      "variant": 2,
+      "file": "candidates/variant-2-512.png",
+      "engine_file": "02-cartoon-map-scene-seen-from-above-at-a-s-1547ca41-512x512-seed7-rep1.png",
+      "prompt_index": 2,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 60.63,
+      "torch_peak_mib": 9784,
+      "sha256": "e7e99a40909a9467a663abb2bd67c7fc35b560c17085c42b24d61deb433cb2cb",
+      "bytes": 436341
+    },
+    {
+      "variant": 3,
+      "file": "candidates/variant-3-512.png",
+      "engine_file": "03-cartoon-scene-with-the-camera-low-and-cl-f4cd97d5-512x512-seed7-rep1.png",
+      "prompt_index": 3,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 60.29,
+      "torch_peak_mib": 9784,
+      "sha256": "8edd5fd8cfb1a6ddbe08de467cc19892dbe5d1d910300fb8795edb84aba10822",
+      "bytes": 411482
+    },
+    {
+      "variant": 4,
+      "file": "candidates/variant-4-512.png",
+      "engine_file": "04-cartoon-scene-from-behind-and-slightly-a-42090b17-512x512-seed7-rep1.png",
+      "prompt_index": 4,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 59.48,
+      "torch_peak_mib": 9784,
+      "sha256": "24a52a79bd23ac7b95856de7e47fba101dbd5b4e5297bb76e7f5f537aeb18747",
+      "bytes": 441892
+    },
+    {
+      "variant": 5,
+      "file": "candidates/variant-5-512.png",
+      "engine_file": "05-cartoon-scene-seen-from-high-above-at-a-5a681f61-512x512-seed7-rep1.png",
+      "prompt_index": 5,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 59.4,
+      "torch_peak_mib": 9784,
+      "sha256": "5b48646c8e9dab785f35d3e4d92b65afda0f16ddf3980753271b356dcb895206",
+      "bytes": 358911
+    },
+    {
+      "variant": 6,
+      "file": "candidates/variant-6-512.png",
+      "engine_file": "06-cartoon-scene-in-a-green-meadow-a-cheerf-23dcbc75-512x512-seed7-rep1.png",
+      "prompt_index": 6,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 59.64,
+      "torch_peak_mib": 9784,
+      "sha256": "132368cbffd27ed34b23b4a1a79657a447f65511fd71df0728939618d8f9ef8b",
+      "bytes": 371988
+    },
+    {
+      "variant": 7,
+      "file": "candidates/variant-7-512.png",
+      "engine_file": "07-cartoon-scene-from-a-low-three-quarter-a-5b709eb0-512x512-seed7-rep1.png",
+      "prompt_index": 7,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 59.76,
+      "torch_peak_mib": 9784,
+      "sha256": "9af14ed3e84f7ba2ce2e943002a13721d421300c9e2d6e4582de069b3355c64e",
+      "bytes": 443757
+    },
+    {
+      "variant": 8,
+      "file": "candidates/variant-8-512.png",
+      "engine_file": "08-cartoon-scene-seen-from-the-side-at-a-sl-52554170-512x512-seed7-rep1.png",
+      "prompt_index": 8,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 60.23,
+      "torch_peak_mib": 9790,
+      "sha256": "2201620fc4a14be01794aa03a9395e6774c9c8403fb1ca7cf6787f9344fa3904",
+      "bytes": 424956
+    }
+  ],
+  "derivatives": [
+    {
+      "size": 288,
+      "files": [
+        "variant-1-288.png",
+        "variant-2-288.png",
+        "variant-3-288.png",
+        "variant-4-288.png",
+        "variant-5-288.png",
+        "variant-6-288.png",
+        "variant-7-288.png",
+        "variant-8-288.png"
+      ]
+    },
+    {
+      "size": 144,
+      "files": [
+        "variant-1-144.png",
+        "variant-2-144.png",
+        "variant-3-144.png",
+        "variant-4-144.png",
+        "variant-5-144.png",
+        "variant-6-144.png",
+        "variant-7-144.png",
+        "variant-8-144.png"
+      ]
+    }
+  ],
+  "sheet": "contact-sheet-288.png",
+  "reconstructed": false,
+  "recorded_at": "2026-10-20T14:22:35Z",
+  "notes": "generated by devctl mods art"
+}

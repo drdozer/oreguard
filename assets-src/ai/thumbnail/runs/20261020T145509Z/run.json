@@ -1,0 +1,240 @@
+{
+  "schema": "art-run/1",
+  "stamp": "20261020T145509Z",
+  "project": "oreguard",
+  "brief": "thumbnail",
+  "engine": {
+    "script": "/home/nmrp3/devel/factorio-mods/scripts/qwen-generate.py",
+    "sha256": "4b130baf0420faaa6c0eb67e805f8c69d42a55f21250f85ec0c7a0a1e962231d",
+    "meta": {
+      "model": "addlabsviral/Qwen-Image-2.1-Turbo-diffuser-8bit",
+      "dtype": "bfloat16",
+      "offload": "model",
+      "width": 512,
+      "height": 512,
+      "steps": 8,
+      "true_cfg": null,
+      "generator_device": "cpu",
+      "vae_tiling": true,
+      "vae_slicing": false,
+      "kv_cache": true,
+      "device": "cuda",
+      "seed": 7,
+      "prompts": [
+        "Wide video-game scene painted in the gritty, semi-realistic art style of the game Factorio: on the right, a large patch of dark blue-grey iron ore crystals sparkling in the bare dirt, with three boxy grey-blue electric mining drills with dark drill arms working the ore and yellow-and-grey transport belts carrying ore chunks away toward the distance. On the far left, a small cluster of assembling machines, stone furnaces and power poles stands on plain dirt ground well away from the patch, across a dirt track. At the boundary between them, a tall weathered metal signpost: its rectangular sign shows the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, and no words. The game's engineer in dark gunmetal-grey power armor with a bright orange visor and orange accents stands by the signpost looking toward the drills. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+        "The video-game art style of the game Factorio, gritty and semi-realistic: in the foreground a tall weathered metal signpost on bare dirt; its rectangular metal sign shows the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, no words anywhere on the sign. Behind the signpost, a large patch of dark blue-grey iron ore crystals sparkling in the ground, boxy grey-blue electric mining drills with dark drill arms working the ore, yellow-and-grey transport belts carrying ore chunks away; a hazy cluster of factory buildings and chimneys sits far in the distance, well away from the patch. The game's engineer in dark gunmetal-grey power armor with a bright orange visor walks past the signpost toward the drills, seen from behind at a slight angle. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+        "Map-style scene seen from above at a slight angle, painted in the gritty, semi-realistic art style of the game Factorio: a large rectangular patch of dark blue-grey iron ore crystals sparkling in bare dirt, boxy grey-blue electric mining drills with dark drill arms standing on the ore, yellow-and-grey transport belts carrying ore chunks away in smooth lines. Around the patch, bare dirt separates it from a cluster of assembling machines, stone furnaces, power poles and storage chests that ring the patch at a clear distance, never touching the ore. At one corner of the patch, a small rectangular sign shows the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, no words. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+        "Scene painted in the gritty, semi-realistic art style of the game Factorio, camera low and close: the game's engineer in dark gunmetal-grey power armor with a bright orange visor and orange accents kneels at the edge of a large patch of dark blue-grey iron ore crystals sparkling in the bare dirt, placing a boxy grey-blue electric mining drill with a dark drill arm onto the ore; a yellow-and-grey transport belt unspools from the drill and curves away. In the far background, across a dirt track, a small cluster of assembling machines and stone furnaces keeps well away from the patch; a small weathered metal sign showing a grey assembling-machine silhouette inside a red prohibition circle with a diagonal slash stands at the patch edge, no words on it. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+        "Scene painted in the gritty, semi-realistic art style of the game Factorio: over a large patch of dark blue-grey iron ore crystals sparkling in bare dirt, a translucent ghostly hologram of an assembling machine glows bright red, hovering where it cannot be built; boxy grey-blue electric mining drills with dark drill arms work the ore below, feeding yellow-and-grey transport belts. Beside the patch, on plain dirt ground, the game's engineer in dark gunmetal-grey power armor with a bright orange visor calmly holds up an open palm toward the red ghost; a small cluster of assembling machines and furnaces stands further back, well away from the ore. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+        "Wide video-game scene painted in the gritty, semi-realistic art style of the game Factorio: on the right, a large patch of rust-red copper ore chunks glinting in the bare dirt, with three boxy grey-blue electric mining drills with dark drill arms working the ore and yellow-and-grey transport belts carrying ore chunks away toward the distance. On the far left, a small cluster of assembling machines, stone furnaces and power poles stands on plain dirt ground well away from the patch, across a dirt track. At the boundary between them, a tall weathered metal signpost: its rectangular sign shows the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, and no words. The game's engineer in dark gunmetal-grey power armor with a bright orange visor and orange accents stands by the signpost looking toward the drills. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+        "Scene painted in the gritty, semi-realistic art style of the game Factorio: a paved factory plaza of grey stone bricks fills the foreground and ends in a clean straight edge exactly at the boundary of a large patch of dark blue-grey iron ore crystals sparkling in bare dirt; beyond that edge, only boxy grey-blue electric mining drills with dark drill arms work the ore and yellow-and-grey transport belts carry ore chunks away, the bare dirt left unpaved. On the plaza right at its edge, a tall weathered metal signpost faces the viewer: its rectangular sign shows the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, no words. The game's engineer in dark gunmetal-grey power armor with a bright orange visor stands on the plaza beside the signpost. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+        "Scene painted in the gritty, semi-realistic art style of the game Factorio: an elevated railway viaduct on sturdy concrete pillars crosses high above a large patch of dark blue-grey iron ore crystals sparkling in bare dirt, the track bed carrying rail tracks over the ore where boxy grey-blue electric mining drills with dark drill arms work below, feeding yellow-and-grey transport belts. At ground level, a regular railway line curves around the edge of the patch without touching the ore. At the patch boundary, a tall weathered metal signpost shows a rectangular sign with the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, no words. The game's engineer in dark gunmetal-grey power armor with a bright orange visor watches from beside the signpost as a train crosses the viaduct above. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks."
+      ],
+      "model_revision": "5fd7a79fdfc88d5b2b4acd1f356bf6c1fa447f1c",
+      "environment": {
+        "python": "3.13.5",
+        "torch": "2.14.0+cu126",
+        "torch_cuda": "12.6",
+        "gpu": "NVIDIA GeForce GTX TITAN X",
+        "driver": "550.163.01",
+        "diffusers": "0.41.0.dev0"
+      }
+    }
+  },
+  "generation": {
+    "width": 512,
+    "height": 512,
+    "seed": 7,
+    "seed_mode": "shared",
+    "count": 8,
+    "reps": 1,
+    "model": "addlabsviral/Qwen-Image-2.1-Turbo-diffuser-8bit",
+    "model_revision": "5fd7a79fdfc88d5b2b4acd1f356bf6c1fa447f1c",
+    "steps": 8,
+    "offload": "model",
+    "dtype": "bfloat16",
+    "true_cfg": null,
+    "generator_device": "cpu"
+  },
+  "prompts": [
+    {
+      "index": 1,
+      "text": "Wide video-game scene painted in the gritty, semi-realistic art style of the game Factorio: on the right, a large patch of dark blue-grey iron ore crystals sparkling in the bare dirt, with three boxy grey-blue electric mining drills with dark drill arms working the ore and yellow-and-grey transport belts carrying ore chunks away toward the distance. On the far left, a small cluster of assembling machines, stone furnaces and power poles stands on plain dirt ground well away from the patch, across a dirt track. At the boundary between them, a tall weathered metal signpost: its rectangular sign shows the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, and no words. The game's engineer in dark gunmetal-grey power armor with a bright orange visor and orange accents stands by the signpost looking toward the drills. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+      "sha1_8": "40ec6d5f"
+    },
+    {
+      "index": 2,
+      "text": "The video-game art style of the game Factorio, gritty and semi-realistic: in the foreground a tall weathered metal signpost on bare dirt; its rectangular metal sign shows the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, no words anywhere on the sign. Behind the signpost, a large patch of dark blue-grey iron ore crystals sparkling in the ground, boxy grey-blue electric mining drills with dark drill arms working the ore, yellow-and-grey transport belts carrying ore chunks away; a hazy cluster of factory buildings and chimneys sits far in the distance, well away from the patch. The game's engineer in dark gunmetal-grey power armor with a bright orange visor walks past the signpost toward the drills, seen from behind at a slight angle. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+      "sha1_8": "a808412a"
+    },
+    {
+      "index": 3,
+      "text": "Map-style scene seen from above at a slight angle, painted in the gritty, semi-realistic art style of the game Factorio: a large rectangular patch of dark blue-grey iron ore crystals sparkling in bare dirt, boxy grey-blue electric mining drills with dark drill arms standing on the ore, yellow-and-grey transport belts carrying ore chunks away in smooth lines. Around the patch, bare dirt separates it from a cluster of assembling machines, stone furnaces, power poles and storage chests that ring the patch at a clear distance, never touching the ore. At one corner of the patch, a small rectangular sign shows the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, no words. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+      "sha1_8": "b7c2a0ee"
+    },
+    {
+      "index": 4,
+      "text": "Scene painted in the gritty, semi-realistic art style of the game Factorio, camera low and close: the game's engineer in dark gunmetal-grey power armor with a bright orange visor and orange accents kneels at the edge of a large patch of dark blue-grey iron ore crystals sparkling in the bare dirt, placing a boxy grey-blue electric mining drill with a dark drill arm onto the ore; a yellow-and-grey transport belt unspools from the drill and curves away. In the far background, across a dirt track, a small cluster of assembling machines and stone furnaces keeps well away from the patch; a small weathered metal sign showing a grey assembling-machine silhouette inside a red prohibition circle with a diagonal slash stands at the patch edge, no words on it. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+      "sha1_8": "cedcd32d"
+    },
+    {
+      "index": 5,
+      "text": "Scene painted in the gritty, semi-realistic art style of the game Factorio: over a large patch of dark blue-grey iron ore crystals sparkling in bare dirt, a translucent ghostly hologram of an assembling machine glows bright red, hovering where it cannot be built; boxy grey-blue electric mining drills with dark drill arms work the ore below, feeding yellow-and-grey transport belts. Beside the patch, on plain dirt ground, the game's engineer in dark gunmetal-grey power armor with a bright orange visor calmly holds up an open palm toward the red ghost; a small cluster of assembling machines and furnaces stands further back, well away from the ore. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+      "sha1_8": "533dbb46"
+    },
+    {
+      "index": 6,
+      "text": "Wide video-game scene painted in the gritty, semi-realistic art style of the game Factorio: on the right, a large patch of rust-red copper ore chunks glinting in the bare dirt, with three boxy grey-blue electric mining drills with dark drill arms working the ore and yellow-and-grey transport belts carrying ore chunks away toward the distance. On the far left, a small cluster of assembling machines, stone furnaces and power poles stands on plain dirt ground well away from the patch, across a dirt track. At the boundary between them, a tall weathered metal signpost: its rectangular sign shows the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, and no words. The game's engineer in dark gunmetal-grey power armor with a bright orange visor and orange accents stands by the signpost looking toward the drills. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+      "sha1_8": "52a058c6"
+    },
+    {
+      "index": 7,
+      "text": "Scene painted in the gritty, semi-realistic art style of the game Factorio: a paved factory plaza of grey stone bricks fills the foreground and ends in a clean straight edge exactly at the boundary of a large patch of dark blue-grey iron ore crystals sparkling in bare dirt; beyond that edge, only boxy grey-blue electric mining drills with dark drill arms work the ore and yellow-and-grey transport belts carry ore chunks away, the bare dirt left unpaved. On the plaza right at its edge, a tall weathered metal signpost faces the viewer: its rectangular sign shows the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, no words. The game's engineer in dark gunmetal-grey power armor with a bright orange visor stands on the plaza beside the signpost. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+      "sha1_8": "a3b1d64e"
+    },
+    {
+      "index": 8,
+      "text": "Scene painted in the gritty, semi-realistic art style of the game Factorio: an elevated railway viaduct on sturdy concrete pillars crosses high above a large patch of dark blue-grey iron ore crystals sparkling in bare dirt, the track bed carrying rail tracks over the ore where boxy grey-blue electric mining drills with dark drill arms work below, feeding yellow-and-grey transport belts. At ground level, a regular railway line curves around the edge of the patch without touching the ore. At the patch boundary, a tall weathered metal signpost shows a rectangular sign with the grey silhouette of an assembling machine inside a bold red prohibition circle with a diagonal slash, no words. The game's engineer in dark gunmetal-grey power armor with a bright orange visor watches from beside the signpost as a train crosses the viaduct above. Muted earthy industrial palette, hand-painted texture detail, soft ambient-occlusion shadows, slightly desaturated surfaces with bright orange accents. No text, no letters, no words, no logos, no user interface, no watermarks.",
+      "sha1_8": "f39bf0ee"
+    }
+  ],
+  "overrides": {},
+  "environment": {
+    "python": "3.13.5",
+    "torch": "2.14.0+cu126",
+    "torch_cuda": "12.6",
+    "gpu": "NVIDIA GeForce GTX TITAN X",
+    "driver": "550.163.01",
+    "diffusers": "0.41.0.dev0"
+  },
+  "images": [
+    {
+      "variant": 1,
+      "file": "candidates/variant-1-512.png",
+      "engine_file": "01-wide-video-game-scene-painted-in-the-gri-40ec6d5f-512x512-seed7-rep1.png",
+      "prompt_index": 1,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 66.04,
+      "torch_peak_mib": 9802,
+      "sha256": "4627fadb8e91993cb67adee173e36acf6c58b353c288c52886b23a7c9826e34f",
+      "bytes": 497719
+    },
+    {
+      "variant": 2,
+      "file": "candidates/variant-2-512.png",
+      "engine_file": "02-the-video-game-art-style-of-the-game-fac-a808412a-512x512-seed7-rep1.png",
+      "prompt_index": 2,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 62.96,
+      "torch_peak_mib": 9802,
+      "sha256": "889133d721a3f72bad54b0503158eea4afb475166959a7ed82a2fa77cc168c4d",
+      "bytes": 462638
+    },
+    {
+      "variant": 3,
+      "file": "candidates/variant-3-512.png",
+      "engine_file": "03-map-style-scene-seen-from-above-at-a-sli-b7c2a0ee-512x512-seed7-rep1.png",
+      "prompt_index": 3,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 62.06,
+      "torch_peak_mib": 9802,
+      "sha256": "bb4286ca53e44ee2170f11a554dc458fa2069f5c245a043e84ffb962ecbfb9b8",
+      "bytes": 499472
+    },
+    {
+      "variant": 4,
+      "file": "candidates/variant-4-512.png",
+      "engine_file": "04-scene-painted-in-the-gritty-semi-realist-cedcd32d-512x512-seed7-rep1.png",
+      "prompt_index": 4,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 62.42,
+      "torch_peak_mib": 9802,
+      "sha256": "885b988bf86564cfdfb0023139b2b80dbc2aa3c85479c3013ebb65d0848ac030",
+      "bytes": 493285
+    },
+    {
+      "variant": 5,
+      "file": "candidates/variant-5-512.png",
+      "engine_file": "05-scene-painted-in-the-gritty-semi-realist-533dbb46-512x512-seed7-rep1.png",
+      "prompt_index": 5,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 61.4,
+      "torch_peak_mib": 9802,
+      "sha256": "05485714abeb7b1819b8c928b027efd0bfda2198aac901718ba33f8066b96cce",
+      "bytes": 471339
+    },
+    {
+      "variant": 6,
+      "file": "candidates/variant-6-512.png",
+      "engine_file": "06-wide-video-game-scene-painted-in-the-gri-52a058c6-512x512-seed7-rep1.png",
+      "prompt_index": 6,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 61.18,
+      "torch_peak_mib": 9807,
+      "sha256": "261e5a6ea682c8b21fbd9e7371b57d4a06d21b7b270f1770c76fc7e340015e1e",
+      "bytes": 513062
+    },
+    {
+      "variant": 7,
+      "file": "candidates/variant-7-512.png",
+      "engine_file": "07-scene-painted-in-the-gritty-semi-realist-a3b1d64e-512x512-seed7-rep1.png",
+      "prompt_index": 7,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 60.82,
+      "torch_peak_mib": 9807,
+      "sha256": "d69027ab139590456785fc16dac129f6eb5f0f30566a25e21d2b1b90e4844048",
+      "bytes": 474569
+    },
+    {
+      "variant": 8,
+      "file": "candidates/variant-8-512.png",
+      "engine_file": "08-scene-painted-in-the-gritty-semi-realist-f39bf0ee-512x512-seed7-rep1.png",
+      "prompt_index": 8,
+      "seed": 7,
+      "rep": 1,
+      "seconds": 61.28,
+      "torch_peak_mib": 9807,
+      "sha256": "81f98142cdf2cb75235764b3e4ddc103b5bbc706dcce719e6f4b284a6444c920",
+      "bytes": 503015
+    }
+  ],
+  "derivatives": [
+    {
+      "size": 288,
+      "files": [
+        "variant-1-288.png",
+        "variant-2-288.png",
+        "variant-3-288.png",
+        "variant-4-288.png",
+        "variant-5-288.png",
+        "variant-6-288.png",
+        "variant-7-288.png",
+        "variant-8-288.png"
+      ]
+    },
+    {
+      "size": 144,
+      "files": [
+        "variant-1-144.png",
+        "variant-2-144.png",
+        "variant-3-144.png",
+        "variant-4-144.png",
+        "variant-5-144.png",
+        "variant-6-144.png",
+        "variant-7-144.png",
+        "variant-8-144.png"
+      ]
+    }
+  ],
+  "sheet": "contact-sheet-288.png",
+  "reconstructed": false,
+  "recorded_at": "2026-10-20T15:03:52Z",
+  "notes": "generated by devctl mods art"
+}

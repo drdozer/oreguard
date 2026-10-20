@@ -1,0 +1,74 @@
+[
+  {
+    "file": "01-cartoon-scene-from-a-low-three-quarter-a-7047410d-512x512-seed7-rep1.png",
+    "prompt_index": 1,
+    "prompt_sha1_8": "7047410d",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 61.5,
+    "torch_peak_mib": 9784
+  },
+  {
+    "file": "02-cartoon-map-scene-seen-from-above-at-a-s-1547ca41-512x512-seed7-rep1.png",
+    "prompt_index": 2,
+    "prompt_sha1_8": "1547ca41",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 60.63,
+    "torch_peak_mib": 9784
+  },
+  {
+    "file": "03-cartoon-scene-with-the-camera-low-and-cl-f4cd97d5-512x512-seed7-rep1.png",
+    "prompt_index": 3,
+    "prompt_sha1_8": "f4cd97d5",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 60.29,
+    "torch_peak_mib": 9784
+  },
+  {
+    "file": "04-cartoon-scene-from-behind-and-slightly-a-42090b17-512x512-seed7-rep1.png",
+    "prompt_index": 4,
+    "prompt_sha1_8": "42090b17",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 59.48,
+    "torch_peak_mib": 9784
+  },
+  {
+    "file": "05-cartoon-scene-seen-from-high-above-at-a-5a681f61-512x512-seed7-rep1.png",
+    "prompt_index": 5,
+    "prompt_sha1_8": "5a681f61",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 59.4,
+    "torch_peak_mib": 9784
+  },
+  {
+    "file": "06-cartoon-scene-in-a-green-meadow-a-cheerf-23dcbc75-512x512-seed7-rep1.png",
+    "prompt_index": 6,
+    "prompt_sha1_8": "23dcbc75",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 59.64,
+    "torch_peak_mib": 9784
+  },
+  {
+    "file": "07-cartoon-scene-from-a-low-three-quarter-a-5b709eb0-512x512-seed7-rep1.png",
+    "prompt_index": 7,
+    "prompt_sha1_8": "5b709eb0",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 59.76,
+    "torch_peak_mib": 9784
+  },
+  {
+    "file": "08-cartoon-scene-seen-from-the-side-at-a-sl-52554170-512x512-seed7-rep1.png",
+    "prompt_index": 8,
+    "prompt_sha1_8": "52554170",
+    "seed": 7,
+    "rep": 1,
+    "seconds": 60.23,
+    "torch_peak_mib": 9790
+  }
+]

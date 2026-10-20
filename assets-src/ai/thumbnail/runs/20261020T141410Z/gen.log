@@ -1,0 +1,100 @@
+loading addlabsviral/Qwen-Image-2.1-Turbo-diffuser-8bit (bfloat16, offload=model) ...
+W1020 15:14:14.793000 830 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1020 15:14:14.820000 830 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`
+/home/nmrp3/devel/factorio-mods/.venv/lib/python3.13/site-packages/diffusers/utils/deprecation_utils.py:23: FutureWarning: `torch_dtype` is deprecated and will be removed in version 1.0.0. Please use `dtype` instead.
+  deprecate("torch_dtype", "1.0.0", _TORCH_DTYPE_DEPRECATION_MESSAGE)
+Loading pipeline components...:   0%|          | 0/5 [00:00<?, ?it/s]Loading pipeline components...:  60%|██████    | 3/5 [00:00<00:00, 18.80it/s]
+Loading weights:   0%|          | 0/750 [00:00<?, ?it/s][A
+Loading weights:   1%|          | 9/750 [00:00<00:09, 81.47it/s][A
+Loading weights:   2%|▏         | 18/750 [00:00<00:11, 65.40it/s][A
+Loading weights:   3%|▎         | 25/750 [00:00<00:10, 66.86it/s][A
+Loading weights:   4%|▍         | 32/750 [00:00<00:11, 63.31it/s][A
+Loading weights:   5%|▌         | 39/750 [00:00<00:11, 61.79it/s][A
+Loading weights:   6%|▋         | 48/750 [00:00<00:10, 66.20it/s][A
+Loading weights:   7%|▋         | 56/750 [00:00<00:10, 66.09it/s][A
+Loading weights:   8%|▊         | 63/750 [00:00<00:10, 66.55it/s][A
+Loading weights:   9%|▉         | 70/750 [00:01<00:10, 64.26it/s][A
+Loading weights:  10%|█         | 78/750 [00:01<00:10, 65.29it/s][A
+Loading weights:  11%|█▏        | 86/750 [00:01<00:10, 66.34it/s][A
+Loading weights:  12%|█▏        | 93/750 [00:01<00:10, 63.48it/s][A
+Loading weights:  13%|█▎        | 100/750 [00:01<00:10, 63.19it/s][A
+Loading weights:  14%|█▍        | 107/750 [00:01<00:10, 63.73it/s][A
+Loading weights:  15%|█▌        | 114/750 [00:01<00:10, 62.49it/s][A
+Loading weights:  16%|█▋        | 122/750 [00:01<00:09, 64.41it/s][A
+Loading weights:  17%|█▋        | 130/750 [00:01<00:09, 65.80it/s][A
+Loading weights:  18%|█▊        | 137/750 [00:02<00:09, 64.18it/s][A
+Loading weights:  19%|█▉        | 145/750 [00:02<00:09, 65.56it/s][A
+Loading weights:  20%|██        | 152/750 [00:02<00:09, 65.53it/s][A
+Loading weights:  21%|██        | 159/750 [00:02<00:09, 62.13it/s][A
+Loading weights:  22%|██▏       | 167/750 [00:02<00:08, 65.14it/s][A
+Loading weights:  23%|██▎       | 175/750 [00:02<00:08, 67.30it/s][A
+Loading weights:  24%|██▍       | 182/750 [00:02<00:08, 66.23it/s][A
+Loading weights:  25%|██▌       | 191/750 [00:02<00:07, 70.76it/s][A
+Loading weights:  27%|██▋       | 199/750 [00:03<00:07, 71.34it/s][A
+Loading weights:  28%|██▊       | 207/750 [00:03<00:07, 71.75it/s][A
+Loading weights:  29%|██▊       | 215/750 [00:03<00:07, 67.93it/s][A
+Loading weights:  30%|██▉       | 224/750 [00:03<00:07, 71.87it/s][A
+Loading weights:  31%|███       | 232/750 [00:03<00:07, 70.38it/s][A
+Loading weights:  32%|███▏      | 240/750 [00:03<00:07, 71.02it/s][A
+Loading weights:  33%|███▎      | 248/750 [00:03<00:07, 67.59it/s][A
+Loading weights:  34%|███▍      | 257/750 [00:03<00:06, 71.61it/s][A
+Loading weights:  35%|███▌      | 265/750 [00:03<00:06, 71.92it/s][A
+Loading weights:  36%|███▋      | 273/750 [00:04<00:06, 72.12it/s][A
+Loading weights:  37%|███▋      | 281/750 [00:04<00:06, 68.37it/s][A
+Loading weights:  39%|███▊      | 290/750 [00:04<00:06, 72.09it/s][A
+Loading weights:  40%|███▉      | 298/750 [00:04<00:06, 71.78it/s][A
+Loading weights:  41%|████      | 306/750 [00:04<00:06, 70.73it/s][A
+Loading weights:  42%|████▏     | 314/750 [00:04<00:06, 67.43it/s][A
+Loading weights:  43%|████▎     | 323/750 [00:04<00:05, 71.41it/s][A
+Loading weights:  44%|████▍     | 331/750 [00:04<00:05, 71.72it/s][A
+Loading weights:  45%|████▌     | 339/750 [00:04<00:05, 71.96it/s][A
+Loading weights:  46%|████▋     | 347/750 [00:05<00:05, 68.13it/s][A
+Loading weights:  47%|████▋     | 356/750 [00:05<00:05, 71.96it/s][A
+Loading weights:  49%|████▊     | 364/750 [00:05<00:05, 72.17it/s][A
+Loading weights:  50%|████▉     | 372/750 [00:05<00:05, 72.31it/s][A
+Loading weights:  51%|█████     | 380/750 [00:05<00:05, 67.80it/s][A
+Loading weights:  52%|█████▏    | 389/750 [00:05<00:05, 71.62it/s][A
+Loading weights:  53%|█████▎    | 397/750 [00:05<00:04, 71.86it/s][A
+Loading weights:  54%|█████▍    | 406/750 [00:05<00:04, 74.67it/s][A
+Loading weights:  57%|█████▋    | 424/750 [00:06<00:03, 100.50it/s][A
+Loading weights:  58%|█████▊    | 438/750 [00:06<00:02, 107.75it/s][A
+Loading weights:  60%|██████    | 452/750 [00:06<00:02, 113.32it/s][A
+Loading weights:  62%|██████▏   | 466/750 [00:06<00:02, 117.24it/s][A
+Loading weights:  65%|██████▍   | 484/750 [00:06<00:02, 130.16it/s][A
+Loading weights:  66%|██████▋   | 498/750 [00:06<00:01, 127.08it/s][A
+Loading weights:  68%|██████▊   | 512/750 [00:06<00:01, 126.75it/s][A
+Loading weights:  70%|███████   | 526/750 [00:06<00:01, 126.64it/s][A
+Loading weights:  73%|███████▎  | 544/750 [00:06<00:01, 137.37it/s][A
+Loading weights:  74%|███████▍  | 558/750 [00:07<00:01, 134.03it/s][A
+Loading weights:  76%|███████▋  | 572/750 [00:07<00:01, 131.86it/s][A
+Loading weights:  78%|███████▊  | 586/750 [00:07<00:01, 130.21it/s][A
+Loading weights:  81%|████████  | 604/750 [00:07<00:01, 139.85it/s][A
+Loading weights:  82%|████████▏ | 618/750 [00:07<00:00, 135.46it/s][A
+Loading weights:  84%|████████▍ | 632/750 [00:07<00:00, 126.34it/s][A
+Loading weights:  86%|████████▌ | 646/750 [00:07<00:00, 126.09it/s][A
+Loading weights:  89%|████████▊ | 664/750 [00:07<00:00, 136.36it/s][A
+Loading weights:  90%|█████████ | 678/750 [00:07<00:00, 130.85it/s][A
+Loading weights:  92%|█████████▏| 692/750 [00:08<00:00, 128.89it/s][A
+Loading weights:  94%|█████████▍| 706/750 [00:08<00:00, 128.16it/s][A
+Loading weights:  97%|█████████▋| 724/750 [00:08<00:00, 138.26it/s][A
+Loading weights:  98%|█████████▊| 738/750 [00:08<00:00, 133.66it/s][ALoading weights: 100%|██████████| 750/750 [00:08<00:00, 88.73it/s] 
+Loading pipeline components...: 100%|██████████| 5/5 [00:10<00:00,  2.52s/it]Loading pipeline components...: 100%|██████████| 5/5 [00:10<00:00,  2.08s/it]
+pipeline loaded in 19.3s
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<01:00,  8.66s/it] 25%|██▌       | 2/8 [00:13<00:39,  6.57s/it] 38%|███▊      | 3/8 [00:19<00:30,  6.06s/it] 50%|█████     | 4/8 [00:24<00:23,  5.94s/it] 62%|██████▎   | 5/8 [00:30<00:17,  5.92s/it] 75%|███████▌  | 6/8 [00:36<00:11,  5.87s/it] 88%|████████▊ | 7/8 [00:42<00:05,  5.83s/it]100%|██████████| 8/8 [00:48<00:00,  5.81s/it]100%|██████████| 8/8 [00:48<00:00,  6.02s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T141410Z/01-cartoon-scene-from-a-low-three-quarter-a-7047410d-512x512-seed7-rep1.png in 61.5s torch-peak(mib)=9784 vram-peak(mib,system)=11001
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<00:59,  8.56s/it] 25%|██▌       | 2/8 [00:14<00:41,  6.86s/it] 38%|███▊      | 3/8 [00:19<00:31,  6.35s/it] 50%|█████     | 4/8 [00:25<00:24,  6.11s/it] 62%|██████▎   | 5/8 [00:31<00:17,  5.98s/it] 75%|███████▌  | 6/8 [00:37<00:11,  5.90s/it] 88%|████████▊ | 7/8 [00:42<00:05,  5.85s/it]100%|██████████| 8/8 [00:48<00:00,  5.82s/it]100%|██████████| 8/8 [00:48<00:00,  6.09s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T141410Z/02-cartoon-map-scene-seen-from-above-at-a-s-1547ca41-512x512-seed7-rep1.png in 60.6s torch-peak(mib)=9784 vram-peak(mib,system)=11057
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<00:58,  8.34s/it] 25%|██▌       | 2/8 [00:14<00:40,  6.78s/it] 38%|███▊      | 3/8 [00:19<00:31,  6.31s/it] 50%|█████     | 4/8 [00:25<00:24,  6.09s/it] 62%|██████▎   | 5/8 [00:31<00:17,  5.97s/it] 75%|███████▌  | 6/8 [00:37<00:11,  5.90s/it] 88%|████████▊ | 7/8 [00:42<00:05,  5.85s/it]100%|██████████| 8/8 [00:48<00:00,  5.82s/it]100%|██████████| 8/8 [00:48<00:00,  6.07s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T141410Z/03-cartoon-scene-with-the-camera-low-and-cl-f4cd97d5-512x512-seed7-rep1.png in 60.3s torch-peak(mib)=9784 vram-peak(mib,system)=11057
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<00:58,  8.42s/it] 25%|██▌       | 2/8 [00:14<00:40,  6.81s/it] 38%|███▊      | 3/8 [00:19<00:31,  6.33s/it] 50%|█████     | 4/8 [00:25<00:24,  6.10s/it] 62%|██████▎   | 5/8 [00:31<00:17,  5.98s/it] 75%|███████▌  | 6/8 [00:37<00:11,  5.90s/it] 88%|████████▊ | 7/8 [00:42<00:05,  5.85s/it]100%|██████████| 8/8 [00:48<00:00,  5.81s/it]100%|██████████| 8/8 [00:48<00:00,  6.07s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T141410Z/04-cartoon-scene-from-behind-and-slightly-a-42090b17-512x512-seed7-rep1.png in 59.5s torch-peak(mib)=9784 vram-peak(mib,system)=11057
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<00:58,  8.35s/it] 25%|██▌       | 2/8 [00:14<00:40,  6.77s/it] 38%|███▊      | 3/8 [00:19<00:31,  6.30s/it] 50%|█████     | 4/8 [00:25<00:24,  6.07s/it] 62%|██████▎   | 5/8 [00:31<00:17,  5.95s/it] 75%|███████▌  | 6/8 [00:36<00:11,  5.88s/it] 88%|████████▊ | 7/8 [00:42<00:05,  5.83s/it]100%|██████████| 8/8 [00:48<00:00,  5.81s/it]100%|██████████| 8/8 [00:48<00:00,  6.05s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T141410Z/05-cartoon-scene-seen-from-high-above-at-a-5a681f61-512x512-seed7-rep1.png in 59.4s torch-peak(mib)=9784 vram-peak(mib,system)=11057
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<00:57,  8.23s/it] 25%|██▌       | 2/8 [00:13<00:40,  6.73s/it] 38%|███▊      | 3/8 [00:19<00:31,  6.27s/it] 50%|█████     | 4/8 [00:25<00:24,  6.06s/it] 62%|██████▎   | 5/8 [00:31<00:17,  5.95s/it] 75%|███████▌  | 6/8 [00:36<00:11,  5.88s/it] 88%|████████▊ | 7/8 [00:42<00:05,  5.83s/it]100%|██████████| 8/8 [00:48<00:00,  5.80s/it]100%|██████████| 8/8 [00:48<00:00,  6.04s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T141410Z/06-cartoon-scene-in-a-green-meadow-a-cheerf-23dcbc75-512x512-seed7-rep1.png in 59.6s torch-peak(mib)=9784 vram-peak(mib,system)=11057
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<00:58,  8.38s/it] 25%|██▌       | 2/8 [00:14<00:40,  6.79s/it] 38%|███▊      | 3/8 [00:19<00:31,  6.31s/it] 50%|█████     | 4/8 [00:25<00:24,  6.08s/it] 62%|██████▎   | 5/8 [00:31<00:17,  5.96s/it] 75%|███████▌  | 6/8 [00:36<00:11,  5.88s/it] 88%|████████▊ | 7/8 [00:42<00:05,  5.84s/it]100%|██████████| 8/8 [00:48<00:00,  5.81s/it]100%|██████████| 8/8 [00:48<00:00,  6.06s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T141410Z/07-cartoon-scene-from-a-low-three-quarter-a-5b709eb0-512x512-seed7-rep1.png in 59.8s torch-peak(mib)=9784 vram-peak(mib,system)=11057
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<00:59,  8.50s/it] 25%|██▌       | 2/8 [00:14<00:41,  6.92s/it] 38%|███▊      | 3/8 [00:20<00:31,  6.39s/it] 50%|█████     | 4/8 [00:25<00:24,  6.14s/it] 62%|██████▎   | 5/8 [00:31<00:18,  6.00s/it] 75%|███████▌  | 6/8 [00:37<00:11,  5.92s/it] 88%|████████▊ | 7/8 [00:43<00:05,  5.86s/it]100%|██████████| 8/8 [00:48<00:00,  5.83s/it]100%|██████████| 8/8 [00:48<00:00,  6.10s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T141410Z/08-cartoon-scene-seen-from-the-side-at-a-sl-52554170-512x512-seed7-rep1.png in 60.2s torch-peak(mib)=9790 vram-peak(mib,system)=11057
+run dir: /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T141410Z

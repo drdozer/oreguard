@@ -1,0 +1,14 @@
+spec_version = 1
+description = "Mod-portal thumbnail: cartoon engineer placing a drill on a protected ore patch while the belt arcs around it; bold, clean, no text (portal spec 144x144 / 288x288 @2x)"
+
+[delivery]
+target = "mod/thumbnail.png"
+sizes = [288]
+
+[generation]
+width = 512
+height = 512
+seed = 7
+seed_mode = "shared"
+steps = 8
+offload = "model"

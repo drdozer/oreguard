@@ -1,0 +1,17 @@
+{
+  "schema": "art-provenance/1",
+  "target": "mod/thumbnail.png",
+  "target_sha256": "b8212f8d9d97148e43b1758063b6526b6d10c7b57a244c80f6cf4c170d5c6aa4",
+  "target_bytes": 132512,
+  "size": 288,
+  "adopted_at": "2026-10-20T15:21:59Z",
+  "run": "20261020T145509Z",
+  "candidate": "candidates/variant-7-512.png",
+  "candidate_sha256": "d69027ab139590456785fc16dac129f6eb5f0f30566a25e21d2b1b90e4844048",
+  "seed": 7,
+  "prompt_index": 7,
+  "model": "addlabsviral/Qwen-Image-2.1-Turbo-diffuser-8bit",
+  "model_revision": "5fd7a79fdfc88d5b2b4acd1f356bf6c1fa447f1c",
+  "note": "Maintainer pick, round 2: near-Factorio scene, factory plaza ending at the ore boundary with the prohibition sign",
+  "history": []
+}

@@ -1,0 +1,105 @@
+loading addlabsviral/Qwen-Image-2.1-Turbo-diffuser-8bit (bfloat16, offload=model) ...
+W1020 15:55:13.357000 12510 torch/utils/_pytree.py:630] <enum 'KernelPreference'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+W1020 15:55:13.397000 12510 torch/utils/_pytree.py:630] <enum 'ScaleCalculationMode'> is an Enum subclass and is now natively supported by torch.compile as an opaque value type. Calling register_constant() on Enum subclasses is deprecated and will be an error in a future release.
+Unable to import `torchao` Tensor objects. This may affect loading checkpoints serialized with `torchao`
+/home/nmrp3/devel/factorio-mods/.venv/lib/python3.13/site-packages/diffusers/utils/deprecation_utils.py:23: FutureWarning: `torch_dtype` is deprecated and will be removed in version 1.0.0. Please use `dtype` instead.
+  deprecate("torch_dtype", "1.0.0", _TORCH_DTYPE_DEPRECATION_MESSAGE)
+Loading pipeline components...:   0%|          | 0/5 [00:00<?, ?it/s]Loading pipeline components...:  40%|████      | 2/5 [00:00<00:00, 10.30it/s]Loading pipeline components...:  80%|████████  | 4/5 [00:00<00:00,  3.87it/s]
+Loading weights:   0%|          | 0/750 [00:00<?, ?it/s][A
+Loading weights:   1%|          | 9/750 [00:00<00:08, 89.10it/s][A
+Loading weights:   2%|▏         | 18/750 [00:00<00:12, 60.89it/s][A
+Loading weights:   3%|▎         | 25/750 [00:00<00:11, 61.07it/s][A
+Loading weights:   4%|▍         | 32/750 [00:00<00:13, 53.69it/s][A
+Loading weights:   5%|▌         | 38/750 [00:00<00:13, 54.00it/s][A
+Loading weights:   6%|▌         | 44/750 [00:00<00:12, 54.92it/s][A
+Loading weights:   7%|▋         | 50/750 [00:00<00:14, 48.06it/s][A
+Loading weights:   8%|▊         | 57/750 [00:01<00:13, 50.18it/s][A
+Loading weights:   9%|▊         | 64/750 [00:01<00:12, 53.46it/s][A
+Loading weights:   9%|▉         | 70/750 [00:01<00:12, 53.30it/s][A
+Loading weights:  10%|█         | 76/750 [00:01<00:12, 53.77it/s][A
+Loading weights:  11%|█         | 82/750 [00:01<00:12, 53.62it/s][A
+Loading weights:  12%|█▏        | 90/750 [00:01<00:11, 57.73it/s][A
+Loading weights:  13%|█▎        | 97/750 [00:01<00:10, 59.95it/s][A
+Loading weights:  14%|█▍        | 104/750 [00:01<00:11, 56.64it/s][A
+Loading weights:  15%|█▍        | 111/750 [00:01<00:10, 58.63it/s][A
+Loading weights:  16%|█▌        | 117/750 [00:02<00:11, 57.42it/s][A
+Loading weights:  17%|█▋        | 125/750 [00:02<00:10, 60.88it/s][A
+Loading weights:  18%|█▊        | 133/750 [00:02<00:09, 63.50it/s][A
+Loading weights:  19%|█▉        | 141/750 [00:02<00:09, 65.43it/s][A
+Loading weights:  20%|█▉        | 148/750 [00:02<00:09, 63.84it/s][A
+Loading weights:  21%|██        | 156/750 [00:02<00:09, 65.62it/s][A
+Loading weights:  22%|██▏       | 164/750 [00:02<00:08, 65.70it/s][A
+Loading weights:  23%|██▎       | 171/750 [00:02<00:09, 63.25it/s][A
+Loading weights:  24%|██▍       | 180/750 [00:03<00:08, 67.24it/s][A
+Loading weights:  25%|██▌       | 188/750 [00:03<00:08, 68.15it/s][A
+Loading weights:  26%|██▌       | 196/750 [00:03<00:08, 68.77it/s][A
+Loading weights:  27%|██▋       | 203/750 [00:03<00:08, 66.51it/s][A
+Loading weights:  28%|██▊       | 211/750 [00:03<00:08, 67.07it/s][A
+Loading weights:  29%|██▉       | 219/750 [00:03<00:07, 67.78it/s][A
+Loading weights:  30%|███       | 226/750 [00:03<00:07, 65.54it/s][A
+Loading weights:  31%|███▏      | 235/750 [00:03<00:07, 69.30it/s][A
+Loading weights:  32%|███▏      | 243/750 [00:03<00:07, 69.48it/s][A
+Loading weights:  33%|███▎      | 251/750 [00:04<00:07, 69.72it/s][A
+Loading weights:  34%|███▍      | 258/750 [00:04<00:07, 67.14it/s][A
+Loading weights:  35%|███▌      | 266/750 [00:04<00:07, 67.95it/s][A
+Loading weights:  37%|███▋      | 274/750 [00:04<00:06, 68.34it/s][A
+Loading weights:  37%|███▋      | 281/750 [00:04<00:07, 65.87it/s][A
+Loading weights:  39%|███▊      | 290/750 [00:04<00:06, 69.76it/s][A
+Loading weights:  40%|███▉      | 298/750 [00:04<00:06, 69.98it/s][A
+Loading weights:  41%|████      | 306/750 [00:04<00:06, 70.10it/s][A
+Loading weights:  42%|████▏     | 314/750 [00:04<00:06, 66.18it/s][A
+Loading weights:  43%|████▎     | 323/750 [00:05<00:06, 69.27it/s][A
+Loading weights:  44%|████▍     | 331/750 [00:05<00:06, 69.40it/s][A
+Loading weights:  45%|████▌     | 339/750 [00:05<00:05, 69.14it/s][A
+Loading weights:  46%|████▌     | 346/750 [00:05<00:06, 66.10it/s][A
+Loading weights:  47%|████▋     | 354/750 [00:05<00:05, 67.20it/s][A
+Loading weights:  48%|████▊     | 362/750 [00:05<00:05, 67.61it/s][A
+Loading weights:  49%|████▉     | 369/750 [00:05<00:05, 65.72it/s][A
+Loading weights:  50%|█████     | 378/750 [00:05<00:05, 69.70it/s][A
+Loading weights:  51%|█████▏    | 386/750 [00:06<00:05, 69.33it/s][A
+Loading weights:  53%|█████▎    | 394/750 [00:06<00:05, 68.64it/s][A
+Loading weights:  54%|█████▎    | 402/750 [00:06<00:05, 67.74it/s][A
+Loading weights:  55%|█████▌    | 416/750 [00:06<00:04, 82.08it/s][A
+Loading weights:  57%|█████▋    | 430/750 [00:06<00:03, 91.64it/s][A
+Loading weights:  59%|█████▉    | 442/750 [00:06<00:03, 97.84it/s][A
+Loading weights:  61%|██████    | 454/750 [00:06<00:02, 103.13it/s][A
+Loading weights:  62%|██████▏   | 466/750 [00:06<00:02, 107.01it/s][A
+Loading weights:  64%|██████▎   | 478/750 [00:06<00:02, 109.55it/s][A
+Loading weights:  65%|██████▌   | 490/750 [00:07<00:02, 112.17it/s][A
+Loading weights:  67%|██████▋   | 502/750 [00:07<00:02, 113.25it/s][A
+Loading weights:  69%|██████▊   | 514/750 [00:07<00:02, 114.26it/s][A
+Loading weights:  70%|███████   | 526/750 [00:07<00:01, 115.40it/s][A
+Loading weights:  72%|███████▏  | 538/750 [00:07<00:01, 116.33it/s][A
+Loading weights:  73%|███████▎  | 550/750 [00:07<00:01, 116.46it/s][A
+Loading weights:  76%|███████▌  | 568/750 [00:07<00:01, 125.94it/s][A
+Loading weights:  78%|███████▊  | 582/750 [00:07<00:01, 121.45it/s][A
+Loading weights:  79%|███████▉  | 595/750 [00:07<00:01, 122.98it/s][A
+Loading weights:  81%|████████  | 608/750 [00:08<00:01, 116.05it/s][A
+Loading weights:  83%|████████▎ | 622/750 [00:08<00:01, 115.29it/s][A
+Loading weights:  85%|████████▌ | 640/750 [00:08<00:00, 125.76it/s][A
+Loading weights:  87%|████████▋ | 654/750 [00:08<00:00, 122.65it/s][A
+Loading weights:  89%|████████▉ | 668/750 [00:08<00:00, 119.76it/s][A
+Loading weights:  91%|█████████ | 680/750 [00:08<00:00, 119.12it/s][A
+Loading weights:  93%|█████████▎| 694/750 [00:08<00:00, 118.15it/s][A
+Loading weights:  95%|█████████▍| 712/750 [00:08<00:00, 127.77it/s][A
+Loading weights:  97%|█████████▋| 726/750 [00:08<00:00, 124.06it/s][A
+Loading weights:  99%|█████████▉| 742/750 [00:09<00:00, 125.68it/s][ALoading weights: 100%|██████████| 750/750 [00:09<00:00, 82.09it/s] 
+Loading pipeline components...: 100%|██████████| 5/5 [00:11<00:00,  3.22s/it]Loading pipeline components...: 100%|██████████| 5/5 [00:11<00:00,  2.24s/it]
+pipeline loaded in 20.4s
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:10<01:10, 10.04s/it] 25%|██▌       | 2/8 [00:15<00:44,  7.42s/it] 38%|███▊      | 3/8 [00:21<00:33,  6.72s/it] 50%|█████     | 4/8 [00:27<00:25,  6.39s/it] 62%|██████▎   | 5/8 [00:33<00:18,  6.21s/it] 75%|███████▌  | 6/8 [00:39<00:12,  6.10s/it] 88%|████████▊ | 7/8 [00:45<00:06,  6.04s/it]100%|██████████| 8/8 [00:50<00:00,  6.00s/it]100%|██████████| 8/8 [00:50<00:00,  6.37s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T145509Z/01-wide-video-game-scene-painted-in-the-gri-40ec6d5f-512x512-seed7-rep1.png in 66.0s torch-peak(mib)=9802 vram-peak(mib,system)=11096
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:09<01:04,  9.20s/it] 25%|██▌       | 2/8 [00:15<00:43,  7.32s/it] 38%|███▊      | 3/8 [00:21<00:33,  6.68s/it] 50%|█████     | 4/8 [00:27<00:25,  6.41s/it] 62%|██████▎   | 5/8 [00:33<00:18,  6.24s/it] 75%|███████▌  | 6/8 [00:38<00:12,  6.11s/it] 88%|████████▊ | 7/8 [00:44<00:06,  6.02s/it]100%|██████████| 8/8 [00:50<00:00,  5.96s/it]100%|██████████| 8/8 [00:50<00:00,  6.32s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T145509Z/02-the-video-game-art-style-of-the-game-fac-a808412a-512x512-seed7-rep1.png in 63.0s torch-peak(mib)=9802 vram-peak(mib,system)=11108
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<01:01,  8.83s/it] 25%|██▌       | 2/8 [00:14<00:42,  7.08s/it] 38%|███▊      | 3/8 [00:20<00:32,  6.50s/it] 50%|█████     | 4/8 [00:26<00:24,  6.23s/it] 62%|██████▎   | 5/8 [00:32<00:18,  6.08s/it] 75%|███████▌  | 6/8 [00:38<00:12,  6.03s/it] 88%|████████▊ | 7/8 [00:43<00:05,  5.98s/it]100%|██████████| 8/8 [00:49<00:00,  5.95s/it]100%|██████████| 8/8 [00:49<00:00,  6.23s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T145509Z/03-map-style-scene-seen-from-above-at-a-sli-b7c2a0ee-512x512-seed7-rep1.png in 62.1s torch-peak(mib)=9802 vram-peak(mib,system)=11108
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<01:02,  8.89s/it] 25%|██▌       | 2/8 [00:14<00:43,  7.21s/it] 38%|███▊      | 3/8 [00:20<00:33,  6.65s/it] 50%|█████     | 4/8 [00:26<00:25,  6.39s/it] 62%|██████▎   | 5/8 [00:32<00:18,  6.26s/it] 75%|███████▌  | 6/8 [00:38<00:12,  6.16s/it] 88%|████████▊ | 7/8 [00:44<00:06,  6.10s/it]100%|██████████| 8/8 [00:50<00:00,  6.05s/it]100%|██████████| 8/8 [00:50<00:00,  6.35s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T145509Z/04-scene-painted-in-the-gritty-semi-realist-cedcd32d-512x512-seed7-rep1.png in 62.4s torch-peak(mib)=9802 vram-peak(mib,system)=11108
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<00:59,  8.49s/it] 25%|██▌       | 2/8 [00:14<00:41,  6.98s/it] 38%|███▊      | 3/8 [00:20<00:32,  6.48s/it] 50%|█████     | 4/8 [00:26<00:24,  6.23s/it] 62%|██████▎   | 5/8 [00:31<00:18,  6.08s/it] 75%|███████▌  | 6/8 [00:37<00:12,  6.02s/it] 88%|████████▊ | 7/8 [00:43<00:05,  5.97s/it]100%|██████████| 8/8 [00:49<00:00,  5.95s/it]100%|██████████| 8/8 [00:49<00:00,  6.21s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T145509Z/05-scene-painted-in-the-gritty-semi-realist-533dbb46-512x512-seed7-rep1.png in 61.4s torch-peak(mib)=9802 vram-peak(mib,system)=11108
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<01:01,  8.77s/it] 25%|██▌       | 2/8 [00:14<00:42,  7.04s/it] 38%|███▊      | 3/8 [00:20<00:32,  6.46s/it] 50%|█████     | 4/8 [00:26<00:24,  6.19s/it] 62%|██████▎   | 5/8 [00:31<00:18,  6.04s/it] 75%|███████▌  | 6/8 [00:37<00:11,  5.98s/it] 88%|████████▊ | 7/8 [00:43<00:05,  5.98s/it]100%|██████████| 8/8 [00:49<00:00,  5.96s/it]100%|██████████| 8/8 [00:49<00:00,  6.21s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T145509Z/06-wide-video-game-scene-painted-in-the-gri-52a058c6-512x512-seed7-rep1.png in 61.2s torch-peak(mib)=9807 vram-peak(mib,system)=11262
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<01:01,  8.76s/it] 25%|██▌       | 2/8 [00:14<00:42,  7.05s/it] 38%|███▊      | 3/8 [00:20<00:32,  6.46s/it] 50%|█████     | 4/8 [00:26<00:24,  6.19s/it] 62%|██████▎   | 5/8 [00:31<00:18,  6.04s/it] 75%|███████▌  | 6/8 [00:37<00:11,  5.95s/it] 88%|████████▊ | 7/8 [00:43<00:05,  5.90s/it]100%|██████████| 8/8 [00:49<00:00,  5.87s/it]100%|██████████| 8/8 [00:49<00:00,  6.16s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T145509Z/07-scene-painted-in-the-gritty-semi-realist-a3b1d64e-512x512-seed7-rep1.png in 60.8s torch-peak(mib)=9807 vram-peak(mib,system)=11262
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:08<01:01,  8.74s/it] 25%|██▌       | 2/8 [00:14<00:42,  7.02s/it] 38%|███▊      | 3/8 [00:20<00:32,  6.44s/it] 50%|█████     | 4/8 [00:26<00:24,  6.18s/it] 62%|██████▎   | 5/8 [00:31<00:18,  6.07s/it] 75%|███████▌  | 6/8 [00:37<00:12,  6.02s/it] 88%|████████▊ | 7/8 [00:43<00:05,  5.99s/it]100%|██████████| 8/8 [00:49<00:00,  5.97s/it]100%|██████████| 8/8 [00:49<00:00,  6.22s/it]
+wrote /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T145509Z/08-scene-painted-in-the-gritty-semi-realist-f39bf0ee-512x512-seed7-rep1.png in 61.3s torch-peak(mib)=9807 vram-peak(mib,system)=11262
+run dir: /home/nmrp3/devel/factorio-mods/mods/oreguard/assets-src/ai/thumbnail/runs/20261020T145509Z
