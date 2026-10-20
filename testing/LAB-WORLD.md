@@ -26,8 +26,18 @@ loads your save and runs the case table against these coordinates — see
 | Copper patch `B` | x 10…14, y 0…4 | 5×5 copper ore |
 | Oil well 1 | center tile **(20, 0)** | ONE crude-oil well per 3×3 block (they are 3×3 entities; blocks must not overlap) |
 | Oil well 2 | center tile **(24, 4)** | same rule |
-| Rail alley `E` | x −3…3, y −8 | 1-tile-high iron-ore strip |
+| Rail alley `E` | x −3…3, y −10…−6 | 7×5 iron-ore strip. Widened 2026-10-20 (probe rounds 9–15): rail-case signals/stops attach 1.5–2 rows off the track lines, so their footprints need the vertical depth to sit over ore. |
 | Power island | EEI at (−27, 12), substation at (−25, 13) | connected (script adds roboport at (−28, 14) — and **stocks it with bots** — passive-provider chest at (−22, 13), plus a **storage chest** at (−22, 15) (bot drop-off safety net — bots unload unneeded items into it)) |
+
+## Fully-scripted regeneration (no hand editing needed anymore)
+
+The level script (scenarios/oreguard-matrix) curates ALL of the above on
+fresh `--load-scenario` generation — carving, resource purge (5 passes until
+empty), fixture stamps, power island. `testing/regen-lab.py` launches the
+session, waits for the curation, RCON-saves `lab`, and adopts it into the
+canonical `testing/scratch/saves/lab.zip`. It verifies by running the matrix
+afterwards; the hand map-editor pass is only needed if you deviate from this
+spec.
 
 - **Do not** place ore anywhere else — the control zone (around (0, 7)) and
   all case positions are asserted to be clean.

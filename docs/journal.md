@@ -564,3 +564,17 @@ client, user-visible observations included) decoded the 2.x lattice:
   those up and took them back to storage — functionally correct". The
   looted-spill + drone-vacuum IS the delivery mechanism; the at-event cargo
   insert (returns 0) remains in the code as a best-effort fast path.
+
+### Deferred plan for the next session (as dictated 2026-10-20)
+
+1. Finish the lab-save regen (headless rig works; last run saved under the
+   default name `oreguard-matrix.zip` instead of `lab` — fix the RCON /save
+   name or copy the produced world-save into testing/scratch/saves/lab.zip;
+   then validate with `a --lab` + `b --lab`).
+2. Commit the outstanding superproject pieces (docs/rail-lattice.md +
+   AGENTS.md index) and any mod-repo leftovers.
+3. Release prep: check-families + `devctl mods check --suite smoke,diff,locale`
+   + `devctl mods build --report`; bump 0.4.1 + changelog (spill signature
+   fix) in one commit; publish dry-run then maintainer `--yes`.
+4. Manual probes the matrix cannot see: floating-text composition per tier,
+   blueprint-ghost refusal at placement, post-update ghost sweep.
