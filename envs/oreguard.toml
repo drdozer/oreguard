@@ -1,0 +1,22 @@
+# Hermetic smoke env for oreguard: owning project + base only.
+# Provisions .cache/envs/dlc/oreguard-<hash8>/ — format contract: docs/test-envs.md
+# (superproject). Re-provision after editing; changed specs land in a fresh env.
+spec_version = 1
+description = "oreguard load smoke: owning project, base-only, data-dir DLC mods disabled"
+
+install = "dlc"
+
+# oreguard is the implicit root (this file lives in its envs/ directory).
+# chase_deps stays false: pre-refactor info.json had vestigial ? cargo-ships
+# which a chase would pull (closure probed separately 2026-10-15; dep removed
+# 2026-10-20) — this env must stay the mod's purest load set so the
+# prototype dump-diff baselines stay comparable across the release.
+roots = []
+chase_deps = false
+without = []
+stub = []
+
+[data_dir_mods]
+# default policy: every data-dir DLC mod (space-age, quality, elevated-rails)
+# written DISABLED — hermetic by default. oreguard is base-only.
+# (elevated-rails closure: envs/er-closure.toml)

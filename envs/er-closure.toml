@@ -1,0 +1,20 @@
+# oreguard with the elevated-rails DLC closure: the ? optional branch as
+# REAL data, not a stub. elevated-rails is a data-dir DLC mod — it loads
+# regardless of mod-list.json zip hygiene (docs/data-lifecycle.md), so the
+# env only needs to declare the enable-policy; the check is that
+# data-final-fixes' rail pass (name == type filter) leaves the DLC's
+# elevated rail variants untouched and the load still exits 0.
+spec_version = 1
+description = "oreguard closure with elevated-rails DLC enabled (real optional-dep branch)"
+
+install = "dlc"
+
+roots = []
+chase_deps = false
+without = []
+stub = []
+
+[data_dir_mods]
+# exception to the disable-all default: keep the elevated-rails DLC mod
+# enabled so the rail collision-mask pass sees the DLC's rail prototypes.
+enable = ["elevated-rails"]
