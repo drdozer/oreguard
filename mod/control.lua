@@ -129,7 +129,17 @@ local function insert_into(carrier, stack, is_robot)
 end
 
 local function spill_stack(surface, position, stack, force)
-    surface.spill_item_stack(position, stack, true, force, false)
+    -- 2.0 API: spill_item_stack takes a single table (the 1.x positional
+    -- form crashes: "Expected 1 argument but 5 were given"). Param mapping:
+    -- enable_looted=true (was the bare `true`), force passed through,
+    -- allow_belts=false (was the bare `false`).
+    surface.spill_item_stack({
+        position = position,
+        stack = stack,
+        enable_looted = true,
+        force = force,
+        allow_belts = false,
+    })
 end
 
 -- Player-path recovery: same semantics as 0.3.x — insert one item, spill if
@@ -159,10 +169,16 @@ local function recover_robot_item(robot, entity, surface, position)
     local stack = { name = name, count = 1 }
     if robot and robot.valid then
         local inserted = insert_into(robot, stack)
+        local cargo_inv = robot.get_inventory(defines.inventory.robot_cargo)
+        log(string.format("[OreGuard] robot item recovery: %s -> cargo insert=%s, cargo now n=%d",
+            name, tostring(inserted),
+            cargo_inv and cargo_inv.get_item_count(name) or -1))
         if inserted < 1 then
             spill_stack(surface, position, stack, robot.force)
         end
     else
+        log("[OreGuard] robot item recovery: robot invalid/nil; spilling at "
+            .. tostring(position.x) .. "," .. tostring(position.y))
         spill_stack(surface, position, stack, entity.force)
     end
 end
