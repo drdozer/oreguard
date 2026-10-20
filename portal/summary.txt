@@ -1,0 +1,1 @@
+Prevents building over ore except for things needed for mining. Can be configured for various levels of restriction.
