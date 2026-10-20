@@ -75,8 +75,6 @@ local function get_allowed_types()
     }
 end
 
-local allowed_types = get_allowed_types()
-
 script.on_event(defines.events.on_built_entity, function(event)
     local allowed_types, allow_flooring = get_allowed_types()
     local entity = event.created_entity or event.entity
