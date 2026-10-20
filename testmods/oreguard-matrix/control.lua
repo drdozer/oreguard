@@ -57,7 +57,7 @@ local case_wait_until
 local done = false
 local robot_infra_done = false
 local last_harness_err
-local DRIVER_REVISION = 21
+local DRIVER_REVISION = 22
 local function seeded_rail()
   local ok, v = pcall(function() return settings.startup["oreguard-allow-ground-rail"].value end)
   if ok then return v == true end
@@ -189,6 +189,27 @@ local function case_setup(cas)
   end
   local build_pos = cas.tile_name
     and { cas.pos[1] + 0.5, cas.pos[2] + 0.5 } or { cas.pos[1], cas.pos[2] }
+  local diag_ok, diag = pcall(function()
+    local proto = prototypes.entity[
+        prototypes.item[cas.item] and prototypes.item[cas.item].place_result or cas.item]
+    local sm = proto and proto.collision_mask and proto.collision_mask.layers or {}
+    local res = surface.find_entities_filtered({
+        area = { { build_pos[1] - 0.5, build_pos[2] - 0.5 }, { build_pos[1] + 0.5, build_pos[2] + 0.5 } },
+        type = "resource" })
+    local rm = res[1] and res[1].prototype.collision_mask.layers or {}
+    local can = player.can_place_entity({ name = cas.item, position = build_pos })
+    local smn, rmn = {}, {}
+    for k in pairs(sm) do smn[#smn + 1] = k end
+    for k in pairs(rm) do rmn[#rmn + 1] = k end
+    return string.format("can_place=%s sig-mask=[%s] ore-mask=[%s]",
+        tostring(can), table.concat(smn, " "), table.concat(rmn, " "))
+  end)
+  log("MATRIX-MASK-DIAG " .. cas.id .. ": " .. tostring(diag))
+  if not clean_probe_done and cas.item == "rail-signal" then
+    clean_probe_done = true
+    local cp_ok, cp_err = pcall(probe_clean_signal)
+    if not cp_ok then log("MATRIX-PROBE-CONTROL error: " .. tostring(cp_err)) end
+  end
   local built_ok = pcall(function()
     player.build_from_cursor({ position = build_pos, direction = defines.direction.north })
   end)
@@ -384,10 +405,10 @@ local RAIL_A = {
   -- unstamped configurations. rail-ramp has a real item and places (name
   -- exemption proven); straight-rail/elevated-rail have no cursor item in
   -- 2.1 → pcall'd set_stack records a clean skip.
-  { id = "rail-signal-hc",   area = "alley", pos = { -1, -8 }, item = "rail-signal",       tier = "hardcore", expected = "engine-refused" },
-  { id = "rail-signal-df",   area = "alley", pos = { 0, -8 },  item = "rail-signal",       tier = "default",  expected = "engine-refused" },
-  { id = "rail-chain-df",    area = "alley", pos = { 1, -8 },  item = "rail-chain-signal", tier = "default",  expected = "engine-refused" },
-  { id = "train-stop-df",    area = "alley", pos = { -3, -8 }, item = "train-stop",        tier = "default",  expected = "engine-refused" },
+  { id = "rail-signal-hc",   area = "alley", pos = { -1, -8 }, item = "rail-signal",       tier = "hardcore", expected = "guard-blocked" },
+  { id = "rail-signal-df",   area = "alley", pos = { 0, -8 },  item = "rail-signal",       tier = "default",  expected = "guard-blocked" },
+  { id = "rail-chain-df",    area = "alley", pos = { 1, -8 },  item = "rail-chain-signal", tier = "default",  expected = "guard-blocked" },
+  { id = "train-stop-df",    area = "alley", pos = { -3, -8 }, item = "train-stop",        tier = "default",  expected = "guard-blocked" },
   { id = "rail-support-df",  area = "alley", pos = { 0, -8 },  item = "rail-support",      tier = "default",  expected = "placed" },
   { id = "rail-ramp-df",     area = "alley", pos = { 1, -8 },  item = "rail-ramp",         tier = "default",  expected = "placed" },
   { id = "straight-rail-hc", area = "alley", pos = { -2, -8 }, item = "straight-rail",     tier = "hardcore", expected = "skip" },
@@ -429,7 +450,7 @@ local PLAYER_CASES_B = {
   { id = "b-signal-hc", area = "alley", pos = { -1, -8 }, item = "rail-signal",        tier = "hardcore", expected = "placed" },
   { id = "b-chain-df",  area = "alley", pos = { 1, -8 },  item = "rail-chain-signal",  tier = "default",  expected = "placed" },
   { id = "b-stop-df",   area = "alley", pos = { -3, -8 }, item = "train-stop",         tier = "default",  expected = "placed" },
-  { id = "b-pole-hc",   area = "iron",  pos = { -16, 2 }, item = "small-electric-pole", tier = "hardcore", expected = "placed" },
+  { id = "b-pole-hc-blk",   area = "iron",  pos = { -16, 2 }, item = "small-electric-pole", tier = "hardcore", expected = "guard-blocked" },
 }
 
 -- ROBOT CASES (ghost-driven): script-created ghosts get their item_requests
@@ -469,6 +490,80 @@ local function skip_remaining_player_cases(reason)
   q_index = #queue
 end
 
+
+-- rail pieces along the alley are INFRA (script-created, no events fire):
+-- signals can only be placed onto rails, so the matrix ensures 3 pieces.
+RAIL_PIECES = { { -1, -8 }, { 0, -8 }, { 1, -8 } }
+local clean_probe_done = false
+local function ensure_rail_infra()
+    for _, piece in ipairs(RAIL_PIECES) do
+        local found = surface.find_entities_filtered({
+            area = { { piece[1] - 0.5, piece[2] - 1.01 }, { piece[1] + 1.5, piece[2] + 1.01 } },
+            type = "straight-rail" })
+        if #found == 0 then
+            -- the rails snap to the rail lattice; try the two plausible centers
+            for _, py in ipairs({ piece[2] + 0.5, piece[2] - 0.5 }) do
+                local ok, ent = pcall(function()
+                    return surface.create_entity({ name = "straight-rail",
+                        position = { piece[1] + 0.5, py },
+                        direction = defines.direction.north, force = "player" })
+                end)
+                if ok and ent then
+                    local bb = ent.bounding_box
+                    log(string.format("MATRIX-RAIL-INFRA piece(%d,%d) v-pos=%.1f created at %.2f,%.2f bbox=[%.2f,%.2f - %.2f,%.2f]",
+                        piece[1], piece[2], py, ent.position.x, ent.position.y,
+                        bb.left_top.x, bb.left_top.y, bb.right_bottom.x, bb.right_bottom.y))
+                    break
+                elseif not ok then
+                    log("MATRIX-RAIL-INFRA piece(" .. piece[1] .. "," .. piece[2] .. ") variant " .. py .. " threw: " .. tostring(ent))
+                end
+            end
+        else
+            log(string.format("MATRIX-RAIL-INFRA piece(%d,%d) already present", piece[1], piece[2]))
+        end
+    end
+    local landed = surface.count_entities_filtered({
+        area = { { RAIL_PIECES[1][1] - 2, RAIL_PIECES[3][2] - 2.5 }, { RAIL_PIECES[3][1] + 2, RAIL_PIECES[1][2] + 2.5 } },
+        type = "straight-rail" })
+    local landed_n = tonumber(landed) or 0
+    log("MATRIX-RAIL-INFRA landed=" .. landed_n)
+end
+
+-- control variant: does a rail-signal place on a rail over CLEAN ground?
+-- Decisive split: if yes, the ore tile is the blocker; if no, it is rail
+-- geometry. Probe-only (no build, no events, nothing placed).
+local function probe_clean_signal()
+    for _, x0 in ipairs({ 4, 5, 6, 7, 8, 10, 12 }) do
+        local area = { { x0 - 0.5, -8.5 }, { x0 + 1.5, -7.5 } }
+        local res = surface.count_entities_filtered({ area = area, type = "resource" })
+        if (tonumber(res) or 0) == 0 then
+            local clean = true
+            for _, ent in ipairs(surface.find_entities(area)) do
+                if ent.type ~= "character" then clean = false end
+            end
+            if clean then
+                for _, py in ipairs({ -8 + 0.5, -8 - 0.5 }) do
+                    local ok, ent = pcall(function()
+                        return surface.create_entity({ name = "straight-rail",
+                            position = { x0 + 0.5, py },
+                            direction = defines.direction.north, force = "player" })
+                    end)
+                    if ok and ent then
+                        local can1 = player.can_place_entity({ name = "rail-signal", position = { x0, -8 } })
+                        local can2 = player.can_place_entity({ name = "rail-signal", position = { x0, -9 } })
+                        log(string.format("MATRIX-PROBE-CONTROL clean-rail at %.1f lands; can_place signal tile-a=%s tile-b=%s",
+                            py, tostring(can1), tostring(can2)))
+                        return
+                    end
+                end
+                log("MATRIX-PROBE-CONTROL clean tile " .. x0 .. " but rail refused")
+                return
+            end
+        end
+    end
+    log("MATRIX-PROBE-CONTROL no clean candidate found")
+end
+
 function tick_dispatch()
   if not surface then
     surface = game.get_surface(1)
@@ -490,6 +585,10 @@ function tick_dispatch()
       robot_infra = {}
     end
     player_grace_until = game.tick + 1200
+    local infra_ok, infra_err = pcall(ensure_rail_infra)
+    if not infra_ok then log("MATRIX-RAIL-INFRA setup error: " .. tostring(infra_err)) end
+    local probe_ok, probe_err = pcall(probe_clean_signal)
+    if not probe_ok then log("MATRIX-PROBE-CONTROL setup error: " .. tostring(probe_err)) end
     stage = "next"
     write_results()
     log(string.format("MATRIX-READY rev=%d cases=%d railtoggle=%s curated=%s oreguard=%s",
