@@ -83,8 +83,65 @@ The dump gate cannot see runtime behavior. Scenario rig (docs/testing.md
 (Hardcore) + engine refusal on solid ore; robot builds (blocked →
 destroyed, item into robot cargo; ghost refusal at blueprint placement);
 tile restore both streams + toggle on/off; ground-rail toggle placement +
-planner behavior; floating-text composition matches tier; post-update ghost
-sweep. Filed as the release's play-test gate before `publish --yes`.
+planner behavior; floating-text composition matches tier (incl. the tiles
+entry when the decorative-tiles toggle is on); post-update ghost sweep.
+Filed as the release's play-test gate before `publish --yes`.
+
+## Session 2026-10-20 (3) — i18n / naming / documentation pass
+
+Full string audit against superproject `docs/locale-hooks.md`: every
+UI-facing string already resolves through locale (log/debug lines are
+diagnostics — untranslated by design); no hardcoded UI text in
+control/data/settings.
+
+### Changes
+
+- **Tier description now enumerates every tier's exact allowances** (the
+  main gap: "choose a preset" said nothing about what each level does);
+  tier is retitled "Ore protection tier"; value labels rephrased
+  consistently (plain dashes, locale-file safe).
+- **Setting titles renamed for intent**: "Allowed entities on ore patches"
+  → "Ore protection tier"; "Modify ore collision masks" → "Keep ground
+  rails off ore (collision layer)"; "Verbose debugging" → "Verbose
+  logging". Descriptions polished (collision description now states the
+  ore-side layer is inert on its own once the rail toggle is on).
+- **Floating text reflects the tiles toggle**: display-only pseudo-family
+  `tiles` added to families.lua (no types, in no tier — checker-compatible)
+  and appended to the composed warning while the toggle is on.
+- **Locale namespacing per locale-hooks.md**: `[message]` →
+  `[oreguard-message]`; `[mod-name]`/`[mod-description]` added (doc rule:
+  keep info.json strings identical — done) so the in-game mods browser
+  resolves through locale as well.
+- Changelog 0.4.0 entry extended with the polish items.
+
+### Gate
+
+check-families OK (10 families incl. the tiles pseudo); smoke/diff/locale
+PASS — diff 0/0/0 vs the canonical baseline. New gotcha recorded (AGENTS
+invariant 6): the flip-probe's cache dir POISONS later `:cache` baselines
+(newest-different-hash selection) — delete it after probing; first post-pass
+diff run failed with 4 stale UNEXPECTED changes until the probe cache went
+away.
+
+### i18n gaps beyond this pass (not trivially fillable here)
+
+- **No non-English translations**: architecture is translation-ready
+  (parameterized template, per-family keys, value labels all keyed) —
+  Factorio falls back to English cleanly; actual translations are a
+  maintainer decision (native review, per-language effort).
+- Portal page + changelog remain English-only by convention.
+- The composed runtime message is not statically verifiable by the
+  `--locale` gate (prototype-only scan); coverage = check-families (key
+  existence) + the play-test suite (resolution) — still pending.
+- `[mod-name]`/`[mod-description]` keying (internal name `oreguard`) is
+  doc-guided but not yet engine-proven; harmless fallback if wrong.
+- Optional future: a structured in-game docs page (e.g. via informatron)
+  mirroring the README matrix.
+
+### End state
+
+- Mod repo: locale/families/control/changelog/AGENTS/journal at HEAD.
+- Superproject: pointer bump.
 
 ## Session 2026-10-20 — full devctl-style refactor (process conformance)
 

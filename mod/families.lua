@@ -41,6 +41,11 @@ Families.list = {
   -- oreguard layer being stamped onto the rail prototypes — otherwise the
   -- engine refuses placement before the runtime guard could allow it).
   { id = "ground-rail", types = { "straight-rail", "half-diagonal-rail", "curved-rail-a", "curved-rail-b", "rail-signal", "rail-chain-signal", "train-stop" } },
+  -- Display-only pseudo-family: no types, in no tier. control.lua appends
+  -- it to the composed floating warning while the runtime toggle
+  -- oreguard-allow-decorative-tiles is on, so the warning reflects that
+  -- tile paving is allowed too.
+  { id = "tiles", types = {} },
 }
 
 Families.tiers = {

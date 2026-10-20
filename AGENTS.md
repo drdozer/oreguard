@@ -61,7 +61,10 @@ specs), portal/ (page source), tools/ (check-families.py). No graphics
    persists the settings STATE — flipping a `default_value` is invisible
    until the file is wiped. Flip-probe procedure: edit default →
    `rm <env>/mods/mod-settings.dat` (+ the stale check-cache dump) →
-   check → revert → wipe again (journal 2026-10-20).
+   check → revert → wipe again. ALSO: delete the probe's cache dir
+   (`.cache/check-cache/<env>/<probe-hash>/`) afterwards — `:cache` picks
+   the NEWEST different-hash dump as baseline, so a stale flip dump
+   poisons later diffs (both gotchas: journal 2026-10-20).
 
 ## Verification quick recipe (devctl verbs)
 

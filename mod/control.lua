@@ -54,18 +54,27 @@ local function get_allowed_types()
 end
 
 -- Floating warning text composed from the active families. The template
--- lives in locale [message] (with __1__), the family display names in
--- locale [oreguard-family]; the composition here is the only place where
--- the two meet, so neither can drift from the real rules.
+-- lives in locale [oreguard-message] (with __1__), the family display
+-- names in locale [oreguard-family]; the composition here is the only
+-- place where the two meet, so neither can drift from the real rules. The
+-- display-only "tiles" pseudo-family (families.lua) is appended while the
+-- decorative-tiles toggle is on.
 local function ore_guard_text()
+    local parts = {}
+    for _, family in ipairs(active_families()) do
+        parts[#parts + 1] = { "oreguard-family." .. family.id }
+    end
+    if settings.global["oreguard-allow-decorative-tiles"].value then
+        parts[#parts + 1] = { "oreguard-family.tiles" }
+    end
     local joined = { "" }
-    for i, family in ipairs(active_families()) do
+    for i, part in ipairs(parts) do
         if i > 1 then
             joined[#joined + 1] = ", "
         end
-        joined[#joined + 1] = { "oreguard-family." .. family.id }
+        joined[#joined + 1] = part
     end
-    return { "message.oreguard.cannot-build", joined }
+    return { "oreguard-message.cannot-build", joined }
 end
 
 local function warn_player(player, position)

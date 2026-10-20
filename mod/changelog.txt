@@ -8,7 +8,8 @@ Date: 2026-10-20
   - New startup toggle "Allow rail tracks, signals and stations over ore": ground rail no longer carries the ore collision layer and the rail planner is no longer forced onto elevated bridges across ore.
   - Construction robots now obey the guard: blocked builds are dismantled and the item returned to the placing robot's cargo; robot-placed tiles on ore are restored likewise.
   - Blocked blueprint/shift-placed ghosts are refused at placement instead of waiting to be blocked at revival; blocked ghosts left by older saves are removed after the update.
-  - The floating warning text is composed from the active families, so it always matches the current tier and toggles.
+  - The floating warning text is composed from the active families, so it always matches the current tier and toggles — including a "Tiles (paving)" entry while the decorative-tiles toggle is on.
+  - Settings reworked for clarity: the tier description spells out every tier's exact allowances, titles say what they do (e.g. "Keep ground rails off ore (collision layer)"), and dropdown labels rephrased consistently.
   - "Mining" tier renamed "Belt Mining" (label only — existing saves keep their setting).
   - Pumpjacks are allowed wherever mining drills are; the engine itself restricts pumpjacks to fluid resources (oil, brine, geysers), which OreGuard does not alter.
   Packaging:
